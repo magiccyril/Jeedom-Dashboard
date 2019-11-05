@@ -14,7 +14,8 @@ export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
     case CAMERA_IMAGE_LOADED:
       return {
-        ...state.camera, ...{[action.payload.cameraId]: action.payload.imageUrl},
+        ...state,
+        [action.payload.cameraId]: action.payload.imageUrl,
       };
 
     default: return state;
