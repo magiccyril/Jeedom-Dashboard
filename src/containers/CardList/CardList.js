@@ -5,9 +5,8 @@ import CardLight from '../../components/CardLights/CardLights';
 import CardMode from '../../components/CardMode/CardMode';
 import { allLightStatusRequested, allLightsOffRequested } from '../../redux/modules/light';
 import { modeListRequested, modeChangeRequested } from "../../redux/modules/mode";
-import { HOUSE_MODE_ID } from '../../constants/equipments';
+import { HOUSE_MODE_ID, LIVING_CAMERA_ID, GARAGE_CAMERA_ID } from '../../constants/equipments';
 import { cameraImageRequested } from "../../redux/modules/camera";
-import { GARAGE_CAMERA_ID } from '../../constants/equipments';
 
 export class CardList extends Component {
   constructor() {
@@ -19,6 +18,7 @@ export class CardList extends Component {
   componentDidMount() {
     this.props.getAllLightStatus();
     this.props.getCameraImage(GARAGE_CAMERA_ID);
+    this.props.getCameraImage(LIVING_CAMERA_ID);
     this.props.getMode(HOUSE_MODE_ID);
   }
 
@@ -42,6 +42,10 @@ export class CardList extends Component {
               <button className="btn btn-primary">Actioner</button>
             </div>
           </CardCamera>
+          
+          <CardCamera
+            title="Séjour"
+            cameraImage={this.props.livingCameraImage} />
 
           <CardMode
             title="Maison"
@@ -77,6 +81,7 @@ const mapStateModeToProps = (modeState) => {
 const mapStateToProps = (state) => ({
   lights: state.light,
   garageCameraImage: state.camera[GARAGE_CAMERA_ID],
+  livingCameraImage: state.camera[LIVING_CAMERA_ID],
   houseCurrentMode: mapStateCurrentModeToProps(state.mode[HOUSE_MODE_ID]),
   houseModes: mapStateModeToProps(state.mode[HOUSE_MODE_ID]),
   houseModeLoading: state.mode[HOUSE_MODE_ID] ? state.mode[HOUSE_MODE_ID].loading : false,
