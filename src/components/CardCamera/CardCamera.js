@@ -18,10 +18,7 @@ export class CardCamera extends Component {
       <Card
         title={this.props.title}
         imgTop={this.props.cameraImage + '&time=' + this.state.time}>
-        <p className="card-text">Le garage est ouvert ou fermé depuis tant de temps !</p>
-        <div className="text-right">
-          <button className="btn btn-primary">Actioner</button>
-        </div>
+        {this.props.children}
       </Card>
     )
   }

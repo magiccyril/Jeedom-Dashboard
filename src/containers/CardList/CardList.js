@@ -36,7 +36,12 @@ export class CardList extends Component {
 
           <CardCamera
             title="Garage"
-            cameraImage={this.props.garageCameraImage} />
+            cameraImage={this.props.garageCameraImage}>
+            <p className="card-text">Le garage est ouvert ou fermé depuis tant de temps !</p>
+            <div className="text-right">
+              <button className="btn btn-primary">Actioner</button>
+            </div>
+          </CardCamera>
 
           <CardMode
             title="Maison"
