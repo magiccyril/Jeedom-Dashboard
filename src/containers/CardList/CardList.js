@@ -26,6 +26,24 @@ export class CardList extends Component {
     this.props.getMode(HOUSE_MODE_ID);
   }
 
+  formatModeToProps(mode) {
+    return '' + mode.id + '|' + mode.name
+  };
+  getCurrentMode(modeState) {
+    if (!modeState || !modeState.currentMode) {
+      return '|...';
+    }
+  
+    return this.formatModeToProps(modeState.currentMode)
+  }
+  getModes(modeState) {
+    if (!modeState || !modeState.modes) {
+      return '|...';
+    }
+  
+    return modeState.modes.map(this.formatModeToProps).join('##');
+  }
+
   render() {
     return (
       <div className="container">
@@ -49,11 +67,11 @@ export class CardList extends Component {
 
           <CardMode
             title="Maison"
-            loading={this.props.houseModeLoading}
-            error={this.props.houseModeErrored}
+            loading={this.props.houseMode ? this.props.houseMode.loading : false}
+            error={this.props.houseMode ? this.props.houseMode.error : false}
             equipment={HOUSE_MODE_ID}
-            currentMode={this.props.houseCurrentMode}
-            modes={this.props.houseModes}
+            currentMode={this.getCurrentMode(this.props.houseMode)}
+            modes={this.getModes(this.props.houseMode)}
             onModeClick={this.props.handleChangeMode}
             onRetry={this.handleHouseModeRetry} />
         </div>
@@ -62,30 +80,11 @@ export class CardList extends Component {
   }
 }
 
-const formatModeToProps = (mode) => ('' + mode.id + '|' + mode.name);
-const mapStateCurrentModeToProps = (modeState) => {
-  if (!modeState || !modeState.currentMode) {
-    return '|...';
-  }
-
-  return formatModeToProps(modeState.currentMode)
-}
-const mapStateModeToProps = (modeState) => {
-  if (!modeState || !modeState.modes) {
-    return '|...';
-  }
-
-  return modeState.modes.map(formatModeToProps).join('##');
-}
-
 const mapStateToProps = (state) => ({
   lights: state.light,
   garageCameraImage: state.camera[GARAGE_CAMERA_ID],
   livingCameraImage: state.camera[LIVING_CAMERA_ID],
-  houseCurrentMode: mapStateCurrentModeToProps(state.mode[HOUSE_MODE_ID]),
-  houseModes: mapStateModeToProps(state.mode[HOUSE_MODE_ID]),
-  houseModeLoading: state.mode[HOUSE_MODE_ID] ? state.mode[HOUSE_MODE_ID].loading : false,
-  houseModeErrored: state.mode[HOUSE_MODE_ID] ? state.mode[HOUSE_MODE_ID].error : false,
+  houseMode: state.mode[HOUSE_MODE_ID],
 });
 
 const mapDispatchToProps = {
