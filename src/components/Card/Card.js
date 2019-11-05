@@ -23,12 +23,14 @@ function Card(props) {
     <div className="card-img-overlay"><p className="card-text text-center">{props.overlay}</p></div>
     : '';
 
+  const hasChildren = props.children ? 'has-children' : 'no-child';
+
   return (
     <div className={cssClass.join(' ')} style={style}>
       {imgTop}
       {overlay}
       <div className="card-body">
-        <h5 className="card-title">{props.title}</h5>
+        <h5 className={'card-title ' + hasChildren}>{props.title}</h5>
         {props.children}
       </div>
       {imgBottom}

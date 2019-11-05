@@ -10,6 +10,9 @@
     color: $white;
     z-index: 10;
   }
+  .card-title.no-child {
+    margin-bottom: 0;
+  }
 }
 
 .card-columns {
