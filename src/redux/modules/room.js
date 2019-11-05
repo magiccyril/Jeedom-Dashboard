@@ -41,7 +41,7 @@ export default function reducer(state = initialState, action = {}) {
 }
 
 // Action Creators
-export function getRooms() {
+export function roomsRequested() {
   return { type: ROOM_REQUESTED };
 }
 export function roomsLoaded(payload) {

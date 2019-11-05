@@ -24,11 +24,13 @@ export default function reducer(state = initialState, action = {}) {
       const homeTemperature = cmds.find(el => (el.name === 'temp-home'));
       const outsideTemperature = cmds.find(el => (el.name === 'temp-outside'));
       const outsideRain = cmds.find(el => (el.name === 'rain'));
+      const light = cmds.find(el => (el.name === 'light'));
 
       return {
         homeTemperature: homeTemperature ? parseFloat(homeTemperature.currentValue).toFixed(1) : '-',
         outsideTemperature: outsideTemperature ? outsideTemperature.currentValue : '-',
         outsideRain: outsideRain ? outsideRain.currentValue : '-',
+        light: light.currentValue,
       };
 
     default: return state;
@@ -39,7 +41,7 @@ export default function reducer(state = initialState, action = {}) {
 export function setSummaryIntervalRegistration() {
   return { type: SUMMARY_INTERVAL_REGISTRATION }
 }
-export function getSummary() {
+export function summaryRequested() {
   return { type: SUMMARY_REQUESTED }
 }
 export function summaryLoaded(payload) {
@@ -57,7 +59,7 @@ export function* saga() {
 
 function* summaryIntervalRegistrationSaga() {
   while(true) {
-    yield put(getSummary())
+    yield put(summaryRequested())
     yield delay(60 * 1000);
   }
 }

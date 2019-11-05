@@ -63,3 +63,25 @@ export function getJeedomRooms() {
     .then(response => response.json())
     .then(response => response.result)
 }
+
+export function execJeedomCmd(id, options = {}) {
+  return getStorageSettings()
+    .then((settings) => {
+      const requestOptions = {
+        method: 'POST',
+        body: JSON.stringify({
+          'jsonrpc': '2.0',
+          'id': getRandomInt(),
+          'method': 'cmd::execCmd',
+          'params': {
+            'apikey': settings.apikey,
+            'id': id,
+            'options': options,
+          }
+        })};
+      const url = settings.url + JEE_API;
+      return fetch(url, requestOptions)
+    })
+    .then(response => response.json())
+    .then(response => response.result)  
+}

@@ -2,19 +2,23 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { showSettings, hideSettings, settingsFormSucceeded } from "../../redux/modules/settings";
 import { appLaunchRequested, appLaunchSucceeded } from "../../redux/modules/launchScreen";
+import { setSummaryIntervalRegistration } from "../../redux/modules/summary";
+import { roomsRequested } from "../../redux/modules/room";
 
-import LaunchScreen from '../LaunchScreen/LaunchScreen';
-import Header from '../Header/Header';
+import LaunchScreen from '../../components/LaunchScreen/LaunchScreen';
+import Header from '../../components/Header/Header';
 import CardList from '../CardList/CardList';
-import RoomList from '../RoomList/RoomList';
-import SettingsBackdrop from '../SettingsBackdrop/SettingsBackdrop';
-import Snackbar from '../Snackbar/Snackbar';
+import RoomList from '../../components/RoomList/RoomList';
+import SettingsBackdrop from '../../components/SettingsBackdrop/SettingsBackdrop';
+import Snackbar from '../../components/Snackbar/Snackbar';
 
 import './App.scss';
 
 export class App extends Component {
   componentDidMount() {
     this.props.appLaunchRequested();
+    this.props.setSummaryIntervalRegistration();
+    this.props.getRooms();
   }
 
   render() {
@@ -29,16 +33,23 @@ export class App extends Component {
 
     return (
       <div className="App" id="App">
-        <Header onShowSettings={this.props.handleShowSettings}/>
+        <Header 
+          onShowSettings={this.props.handleShowSettings}
+          summary={this.props.summary} />
+
         <CardList />
-        <RoomList />
+
+        <RoomList
+          rooms={this.props.rooms.list}
+          loading={this.props.rooms.loading}
+          error={this.props.rooms.error} />
         
         <SettingsBackdrop
           show={this.props.showSettingsBackdrop}
           onClose={this.props.handleCloseSettings}
           onSuccess={this.props.handleSettingsBackdropFormSuccess} />
 
-        <Snackbar />
+        <Snackbar text={this.props.snackbar.text} type={this.props.snackbar.type} />
       </div>
     );
   }
@@ -47,6 +58,9 @@ export class App extends Component {
 const mapStateToProps = (state) => ({
   launchScreen: state.launchScreen,
   showSettingsBackdrop: state.settings.show,
+  summary: state.summary,
+  rooms: state.room,
+  snackbar: state.snackbar,
 });
 
 /*
@@ -69,6 +83,8 @@ const mapDispatchToProps = {
   handleCloseSettings: hideSettings,
   handleLaunchScreenSetupSuccess: appLaunchSucceeded,
   handleSettingsBackdropFormSuccess: settingsFormSucceeded,
+  setSummaryIntervalRegistration: setSummaryIntervalRegistration,
+  getRooms: roomsRequested,
 };
 
 

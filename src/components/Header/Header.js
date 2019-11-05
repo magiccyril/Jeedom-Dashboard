@@ -10,7 +10,7 @@ function Header(props) {
 
         <h1>Salut,</h1>
         <h3>Tout va bien à la maison</h3>
-        <Summary />
+        <Summary summary={props.summary} />
       </div>
     </header>
   );

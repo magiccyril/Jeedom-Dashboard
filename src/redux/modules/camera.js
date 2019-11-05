@@ -22,7 +22,7 @@ export default function reducer(state = initialState, action = {}) {
 }
 
 // Action Creators
-export function getCameraImage(cameraId) {
+export function cameraImageRequested(cameraId) {
   return { type: CAMERA_IMAGE_REQUESTED, cameraId: cameraId}
 }
 export function cameraImageLoaded(cameraId, imageUrl) {

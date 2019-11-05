@@ -1,5 +1,5 @@
 import React from 'react';
-import SettingsForm from '../SettingsForm/SettingsForm';
+import SettingsForm from '../../containers/SettingsForm/SettingsForm';
 
 import loaderSvg from './loader.svg';
 import './LaunchScreen.scss';

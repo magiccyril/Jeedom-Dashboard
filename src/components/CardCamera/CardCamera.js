@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from "react-redux";
-import { getCameraImage } from "../../redux/modules/camera";
 import Card from '../Card/Card';
 
 export class CardCamera extends Component {
@@ -13,25 +11,20 @@ export class CardCamera extends Component {
 
   componentDidMount() {
     //setInterval(() => this.setState({ time: Date.now() }), 10000);
-    this.props.getCameraImage(this.props.cameraId);
   }
 
   render() {
     return (
       <Card
         title={this.props.title}
-        backgroundUrl={this.props.image + '&time=' + this.state.time} />
+        imgTop={this.props.cameraImage + '&time=' + this.state.time}>
+        <p className="card-text">Le garage est ouvert ou fermé depuis tant de temps !</p>
+        <div className="text-right">
+          <button className="btn btn-primary">Actioner</button>
+        </div>
+      </Card>
     )
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  return {
-    image: state.camera[ownProps.cameraId]
-  };
-}
-
-export default connect(
-  mapStateToProps,
-  { getCameraImage }
-)(CardCamera);
+export default CardCamera;

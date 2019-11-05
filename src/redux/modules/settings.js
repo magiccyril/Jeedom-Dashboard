@@ -1,5 +1,5 @@
 import { takeEvery, put } from 'redux-saga/effects';
-import { showSnackbar } from './snackbar';
+import { showSuccessSnackbar } from './snackbar';
 
 // Actions
 export const SETTINGS_SHOW = 'SETTINGS_SHOW';
@@ -44,5 +44,5 @@ export function* saga() {
 
 function* settingsFormSucceededSaga() {
   yield put(hideSettings());
-  yield put(showSnackbar('Paramètres enregistrés !'));
+  yield put(showSuccessSnackbar('Paramètres enregistrés !'));
 }

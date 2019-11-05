@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Backdrop from '../Backdrop/Backdrop';
-import SettingsForm from '../SettingsForm/SettingsForm';
+import SettingsForm from '../../containers/SettingsForm/SettingsForm';
 
 function SettingsBackdrop(props) {
   return (

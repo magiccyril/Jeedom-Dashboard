@@ -1,3 +1,22 @@
+@import "../../../node_modules/bootstrap/scss/functions";
+@import "../../../node_modules/bootstrap/scss/variables";
+@import "../../../node_modules/bootstrap/scss/mixins";
+
 .card {
   margin-bottom: 1rem;
+
+  .card-img-overlay {
+    background: rgba($gray-700, .75);
+    color: $white;
+    z-index: 10;
+  }
+}
+
+.card-columns {
+  @include media-breakpoint-only(md) {
+    column-count: 2;
+  }
+  @include media-breakpoint-up(xl) {
+    column-count: 3;
+  }
 }

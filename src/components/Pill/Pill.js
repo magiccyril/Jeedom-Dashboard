@@ -8,7 +8,15 @@ function Pill(props) {
     const pillImgStyle = {
       backgroundImage: 'url(' + pillImageUrl + ')'
     };
-    pillImage = <span className="pill-img" style={pillImgStyle}>&nbsp;</span>;
+    let pillClassName = ['pill-img'];
+    if (props.text) {
+      pillClassName.push('pill-img-with-text');
+    }
+    else {
+      pillClassName.push('pill-img-no-text');
+    }
+
+    pillImage = <span className={pillClassName.join(' ')} style={pillImgStyle}>&nbsp;</span>;
   }
   
   return (

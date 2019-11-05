@@ -1,0 +1,1 @@
+export const ALL_LIGHT_OFF_CMD = 1094;
