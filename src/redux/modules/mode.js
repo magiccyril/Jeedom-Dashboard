@@ -20,7 +20,8 @@ export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
     case MODE_LIST_REQUESTED:
       return {
-        ...state, [action.id]: {
+        ...state,
+        [action.id]: {
           ...state[action.id],
           loading: true,
         }
@@ -28,7 +29,8 @@ export default function reducer(state = initialState, action = {}) {
     
     case MODE_LIST_ERRORED:
       return {
-        ...state, [action.payload.id]: {
+        ...state,
+        [action.payload.id]: {
           ...state[action.payload.id],
           loading: false,
           error: true,
@@ -53,7 +55,8 @@ export default function reducer(state = initialState, action = {}) {
       const currentMode = modes.find(mode => (mode.name === currentModeValue));
 
       return {
-        ...state, [action.payload.id]: {
+        ...state,
+        [action.payload.id]: {
           currentMode: currentMode,
           modes: modes,
           loading: false,
@@ -63,7 +66,8 @@ export default function reducer(state = initialState, action = {}) {
     
     case MODE_CHANGE_REQUESTED:
       return {
-        ...state, [action.payload.equipment]: {
+        ...state,
+        [action.payload.equipment]: {
           ...state[action.payload.equipment],
           loading: true,
         }
@@ -71,7 +75,8 @@ export default function reducer(state = initialState, action = {}) {
     
     case MODE_CHANGE_SUCCEEDED:
       return {
-        ...state, [action.payload.equipment]: {
+        ...state,
+        [action.payload.equipment]: {
           ...state[action.payload.equipment],
           loading: false,
           error: false,
