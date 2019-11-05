@@ -14,31 +14,58 @@ export const LIGHT_ALL_OFF_REQUESTED = 'LIGHT_ALL_OFF_REQUESTED';
 
 // Reducer
 const initialState = {
-  livingroom: -1,
-  kitchen: -1,
-  entry: -1,
-  bedroom: -1,
+  loading: false,
+  error: false,
+  lights: [],
 };
 
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
+    case LIGHT_ALL_STATUS_REQUESTED:
+      return {
+        loading: true,
+        error: false,
+        lights: [],
+      };
+
+    case LIGHT_ALL_STATUS_ERRORED:
+      return {
+        loading: false,
+        error: true,
+        lights: [],
+      };
+    
     case LIGHT_ALL_STATUS_LOADED:
       const cmds = action.payload.cmds;
 
-      const livingroom = cmds.find(el => (el.name === 'livingroom'));
-      const kitchen = cmds.find(el => (el.name === 'kitchen'));
-      const entry = cmds.find(el => (el.name === 'entry'));
-      const bedroom = cmds.find(el => (el.name === 'bedroom'));
+      let lights = [];
+      cmds.forEach(cmd => {
+        if (cmd.isVisible === '1' && cmd.logicalId !== 'refresh') {
+          let label = cmd.name;
+          let singularComplement = 'de la';
+          if (cmd.display.parameters
+            && cmd.display.parameters.label
+            && cmd.display.parameters.singularComplement) {
+            label = cmd.display.parameters.label;
+            singularComplement = cmd.display.parameters.singularComplement;
+          }
+          
+          lights.push({
+            id: cmd.id,
+            name: cmd.name,
+            order: cmd.order,
+            value: cmd.currentValue,
+            label: label,
+            singularComplement: singularComplement,
+          });
+        }
+      });
 
       return {
-        livingroom: livingroom.currentValue,
-        kitchen: kitchen.currentValue,
-        entry: entry.currentValue,
-        bedroom: bedroom.currentValue,
+        loading: false,
+        error: false,
+        lights: lights,
       };
-    
-      case LIGHT_ALL_STATUS_ERRORED:
-        return initialState;
 
     default: return state;
   }

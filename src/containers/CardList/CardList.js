@@ -13,6 +13,7 @@ export class CardList extends Component {
     super();
 
     this.handleHouseModeRetry = this.handleHouseModeRetry.bind(this);
+    this.handleLightStatusRetry = this.handleLightStatusRetry.bind(this);
   }
 
   componentDidMount() {
@@ -24,6 +25,10 @@ export class CardList extends Component {
 
   handleHouseModeRetry() {
     this.props.getMode(HOUSE_MODE_ID);
+  }
+
+  handleLightStatusRetry() {
+    this.props.getAllLightStatus();
   }
 
   formatModeToProps(mode) {
@@ -49,8 +54,11 @@ export class CardList extends Component {
       <div className="container">
         <div className="card-columns">
           <CardLight
-            lights={this.props.lights}
-            onOffClick={this.props.handleLightOffClick} />
+            error={this.props.lights.error}
+            loading={this.props.lights.loading}
+            lights={this.props.lights.lights}
+            onOffClick={this.props.handleLightOffClick}
+            onRetry={this.handleLightStatusRetry} />
 
           <CardCamera
             title="Garage"

@@ -2,41 +2,35 @@ import React from 'react';
 import Card from '../Card/Card';
 
 function CardLights(props) {
-  let lightsOn = [];
-  let singularTextComplement = 'de la ';
+  const lightsOn = props.lights.filter((light) => (light.value === 1));
+  
+  let text = 'Le statut des lumières est indéterminé !';
 
-  if (props.lights.livingroom === 1) {
-    singularTextComplement = 'du ';
-    lightsOn.push('séjour');
+  if (lightsOn.length === 0) {
+    text = 'Toutes les lumières sont éteintes.';
   }
-  if (props.lights.kitchen === 1) {
-    lightsOn.push('cuisine');
-  }
-  if (props.lights.entry === 1) {
-    singularTextComplement = "de l'"
-    lightsOn.push('entrée');
-  }
-  if (props.lights.bedroom === 1) {
-    lightsOn.push('chambre');
-  }
-
-  let text = 'Toutes les lumières sont eteintes';
-
-  if (props.lights.livingroom === -1
-    || props.lights.kitchen === -1
-    || props.lights.entry === -1
-    || props.lights.bedroom === -1) {
-      text = 'Le statut des lumières est indéterminé !';
-    }
   if (lightsOn.length === 1) {
-    text = 'La lumière ' + singularTextComplement + lightsOn[0] + ' est allumée';
+    text = 'La lumière ' + lightsOn[0].singularComplement + ' ' + lightsOn[0].label + ' est allumée.';
   }
   if (lightsOn.length > 1) {
-    text = 'Les lumières : ' + lightsOn.join(', ') + ' sont allumées';
+    text = 'Les lumières ' + lightsOn.reduce((labels, item) => labels + item.label + ', ', '') + ' sont allumées.';
   }
-  
+
+  const overlay = props.loading ? 'Chargement...' : '';
+
+  if (props.error) {
+    return (
+      <Card title={props.title} error overlay={overlay}>
+        <p className="card-text">Oups une erreur est survenue dans la récupération de l'état des lumières !</p>
+        <div className="text-right">
+          <button className="btn btn-primary" onClick={props.onRetry}>Ré-essayer</button>
+        </div>
+      </Card>
+    )
+  }
+
   return (
-    <Card title="Lumières">
+    <Card title="Lumières" overlay={overlay}>
       <p className="card-text">{text}</p>
       <div className="text-right">
         <button className="btn btn-primary" onClick={props.onOffClick}>Tout éteindre</button>
