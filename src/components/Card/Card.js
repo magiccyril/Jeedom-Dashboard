@@ -24,17 +24,15 @@ function Card(props) {
     : '';
 
   return (
-    //<div className="col-12 col-lg-6">
-      <div className={cssClass.join(' ')} style={style}>
-        {imgTop}
-        {overlay}
-        <div className="card-body">
-          <h5 className="card-title">{props.title}</h5>
-          {props.children}
-        </div>
-        {imgBottom}
+    <div className={cssClass.join(' ')} style={style}>
+      {imgTop}
+      {overlay}
+      <div className="card-body">
+        <h5 className="card-title">{props.title}</h5>
+        {props.children}
       </div>
-    //</div>
+      {imgBottom}
+    </div>
   );
 }
 

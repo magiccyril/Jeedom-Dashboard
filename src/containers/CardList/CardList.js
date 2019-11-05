@@ -27,7 +27,6 @@ export class CardList extends Component {
   }
 
   render() {
-    //<div className="row card-list">
     return (
       <div className="container">
         <div className="card-columns">
