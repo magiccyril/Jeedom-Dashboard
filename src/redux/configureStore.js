@@ -10,6 +10,7 @@ import summary, { saga as summarySaga } from './modules/summary';
 import room, { saga as roomSaga } from './modules/room';
 import camera, { saga as cameraSaga } from './modules/camera';
 import light, { saga as lightSaga } from './modules/light';
+import door, { saga as doorSaga } from './modules/door';
 import mode, { saga as modeSaga } from './modules/mode';
 
 const sagaMiddleware = createSagaMiddleware();
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
   room,
   camera,
   light,
+  door,
   mode,
 });
 
@@ -37,6 +39,7 @@ function* rootSaga() {
   yield spawn(roomSaga);
   yield spawn(cameraSaga);
   yield spawn(lightSaga);
+  yield spawn(doorSaga);
   yield spawn(modeSaga);
 }
 

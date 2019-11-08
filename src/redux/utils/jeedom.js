@@ -85,3 +85,45 @@ export function execJeedomCmd(id, options = {}) {
     .then(response => response.json())
     .then(response => response.result)  
 }
+
+export function getJeedomCommand(id) {
+  return getStorageSettings()
+    .then((settings) => {
+      const requestOptions = {
+        method: 'POST',
+        body: JSON.stringify({
+          'jsonrpc': '2.0',
+          'id': getRandomInt(),
+          'method': 'cmd::byId',
+          'params': {
+            'apikey': settings.apikey,
+            'id': id,
+          }
+        })};
+      const url = settings.url + JEE_API;
+      return fetch(url, requestOptions)
+    })
+    .then(response => response.json())
+    .then(response => response.result)  
+}
+
+export function getJeedomCommandHistory(id) {
+  return getStorageSettings()
+    .then((settings) => {
+      const requestOptions = {
+        method: 'POST',
+        body: JSON.stringify({
+          'jsonrpc': '2.0',
+          'id': getRandomInt(),
+          'method': 'cmd::getHistory',
+          'params': {
+            'apikey': settings.apikey,
+            'id': id,
+          }
+        })};
+      const url = settings.url + JEE_API;
+      return fetch(url, requestOptions)
+    })
+    .then(response => response.json())
+    .then(response => response.result)  
+}

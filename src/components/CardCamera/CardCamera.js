@@ -17,7 +17,8 @@ export class CardCamera extends Component {
     return (
       <Card
         title={this.props.title}
-        imgTop={this.props.cameraImage + '&time=' + this.state.time}>
+        imgTop={this.props.cameraImage + '&time=' + this.state.time}
+        overlay={this.props.overlay}>
         {this.props.children}
       </Card>
     )
