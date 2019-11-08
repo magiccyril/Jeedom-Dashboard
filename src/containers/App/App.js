@@ -9,7 +9,7 @@ import LaunchScreen from '../../components/LaunchScreen/LaunchScreen';
 import Header from '../../components/Header/Header';
 import CardList from '../CardList/CardList';
 import RoomList from '../../components/RoomList/RoomList';
-import SettingsBackdrop from '../../components/SettingsBackdrop/SettingsBackdrop';
+import BackdropSettings from '../../components/BackdropSettings/BackdropSettings';
 import Snackbar from '../../components/Snackbar/Snackbar';
 
 import './App.scss';
@@ -44,7 +44,7 @@ export class App extends Component {
           loading={this.props.rooms.loading}
           error={this.props.rooms.error} />
         
-        <SettingsBackdrop
+        <BackdropSettings
           show={this.props.showSettingsBackdrop}
           onClose={this.props.handleCloseSettings}
           onSuccess={this.props.handleSettingsBackdropFormSuccess} />
@@ -62,20 +62,6 @@ const mapStateToProps = (state) => ({
   rooms: state.room,
   snackbar: state.snackbar,
 });
-
-/*
-const mapDispatchToProps = dispatch => {
-  return {
-    appLaunchRequested: () => { dispatch(appLaunchRequested()) },
-    handleShowSettings: (e) => {
-      e.preventDefault();
-      dispatch(showSettings());
-    },
-    handleCloseSettings: () => {
-      dispatch(hideSettings());
-    },
-  }
-}*/
 
 const mapDispatchToProps = {
   appLaunchRequested: appLaunchRequested,

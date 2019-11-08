@@ -3,7 +3,7 @@ import React from 'react';
 import Backdrop from '../Backdrop/Backdrop';
 import SettingsForm from '../../containers/SettingsForm/SettingsForm';
 
-function SettingsBackdrop(props) {
+function BackdropSettings(props) {
   return (
     props.show ?
       <Backdrop title="Paramètres" onClose={props.onClose}>
@@ -13,4 +13,4 @@ function SettingsBackdrop(props) {
   );
 }
 
-export default SettingsBackdrop;
+export default BackdropSettings;
