@@ -19,9 +19,11 @@ export class Backdrop extends Component {
   handleClose(event) {
     event.preventDefault();
     this.setState({show: false});
-    setTimeout(() => {
-      this.props.onClose();
-    }, 350);
+    if (this.props.onClose) {
+      setTimeout(() => {
+        this.props.onClose();
+      }, 350);
+    }
   }
 
   render() {
@@ -34,7 +36,7 @@ export class Backdrop extends Component {
           <div className="container">
             <div className="row justify-content-center">
               <div className="col-12 col-lg-10 col-xl-9 backdrop-content">
-                <h3>Paramètres</h3>
+                <h3>{this.props.title}</h3>
                 <a href="#App" className="backdrop-close text-hide" onClick={this.handleClose}>Fermer</a>
                 <hr/>
                 {this.props.children}
