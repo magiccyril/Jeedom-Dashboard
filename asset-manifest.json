@@ -1,27 +1,27 @@
 {
   "files": {
-    "main.css": "/static/css/main.4bd4c83b.chunk.css",
-    "main.js": "/static/js/main.e75e2e8f.chunk.js",
-    "main.js.map": "/static/js/main.e75e2e8f.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.1991d113.js",
-    "runtime-main.js.map": "/static/js/runtime-main.1991d113.js.map",
-    "static/js/2.638a1548.chunk.js": "/static/js/2.638a1548.chunk.js",
-    "static/js/2.638a1548.chunk.js.map": "/static/js/2.638a1548.chunk.js.map",
-    "index.html": "/index.html",
-    "precache-manifest.a5ac959183e46a13c9a6f6afcc3333e5.js": "/precache-manifest.a5ac959183e46a13c9a6f6afcc3333e5.js",
-    "service-worker.js": "/service-worker.js",
-    "static/css/main.4bd4c83b.chunk.css.map": "/static/css/main.4bd4c83b.chunk.css.map",
-    "static/media/Backdrop.scss": "/static/media/close.6a0d0875.svg",
-    "static/media/light.svg": "/static/media/light.9eee2013.svg",
-    "static/media/loader.svg": "/static/media/loader.27e2ef14.svg",
-    "static/media/rain.svg": "/static/media/rain.5804a26e.svg",
-    "static/media/Header.scss": "/static/media/settings.c1e11fed.svg",
-    "static/media/sun.svg": "/static/media/sun.3b2f1925.svg"
+    "main.css": "dashboard.maison.18ruedivona.eu/static/css/main.e42dad28.chunk.css",
+    "main.js": "dashboard.maison.18ruedivona.eu/static/js/main.4576f299.chunk.js",
+    "main.js.map": "dashboard.maison.18ruedivona.eu/static/js/main.4576f299.chunk.js.map",
+    "runtime-main.js": "dashboard.maison.18ruedivona.eu/static/js/runtime-main.71c0f359.js",
+    "runtime-main.js.map": "dashboard.maison.18ruedivona.eu/static/js/runtime-main.71c0f359.js.map",
+    "static/js/2.638a1548.chunk.js": "dashboard.maison.18ruedivona.eu/static/js/2.638a1548.chunk.js",
+    "static/js/2.638a1548.chunk.js.map": "dashboard.maison.18ruedivona.eu/static/js/2.638a1548.chunk.js.map",
+    "index.html": "dashboard.maison.18ruedivona.eu/index.html",
+    "precache-manifest.d48e5c5ab7a2f769039a803fdacd6d27.js": "dashboard.maison.18ruedivona.eu/precache-manifest.d48e5c5ab7a2f769039a803fdacd6d27.js",
+    "service-worker.js": "dashboard.maison.18ruedivona.eu/service-worker.js",
+    "static/css/main.e42dad28.chunk.css.map": "dashboard.maison.18ruedivona.eu/static/css/main.e42dad28.chunk.css.map",
+    "static/media/Backdrop.scss": "dashboard.maison.18ruedivona.eu/static/media/close.6a0d0875.svg",
+    "static/media/light.svg": "dashboard.maison.18ruedivona.eu/static/media/light.9eee2013.svg",
+    "static/media/loader.svg": "dashboard.maison.18ruedivona.eu/static/media/loader.27e2ef14.svg",
+    "static/media/rain.svg": "dashboard.maison.18ruedivona.eu/static/media/rain.5804a26e.svg",
+    "static/media/Header.scss": "dashboard.maison.18ruedivona.eu/static/media/settings.c1e11fed.svg",
+    "static/media/sun.svg": "dashboard.maison.18ruedivona.eu/static/media/sun.3b2f1925.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.1991d113.js",
+    "static/js/runtime-main.71c0f359.js",
     "static/js/2.638a1548.chunk.js",
-    "static/css/main.4bd4c83b.chunk.css",
-    "static/js/main.e75e2e8f.chunk.js"
+    "static/css/main.e42dad28.chunk.css",
+    "static/js/main.4576f299.chunk.js"
   ]
 }
