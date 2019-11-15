@@ -33,7 +33,10 @@ jobs:
       
       - run:
           name: Deploy
-          command: npm run deploy
+          command: |
+            git config user.email "magiccyril@gmail.com"
+            git config user.name "Cyril G."
+            npm run deploy
 
 
 workflows:
