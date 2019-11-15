@@ -36,7 +36,7 @@ jobs:
           command: npm run-script build
       
       - persist_to_workspace:
-          root: /build
+          root: build
           paths: build
 
 workflows:
