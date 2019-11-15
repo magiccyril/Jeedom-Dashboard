@@ -35,6 +35,8 @@ jobs:
     docker:
       - image: circleci/node:10
     steps:
+      - checkout # special step to check out source code to working directory
+
       - add_ssh_keys:
           fingerprints:
             - "db:e3:c8:a2:f8:d2:48:81:72:b6:2d:e9:6b:b7:95:30"
