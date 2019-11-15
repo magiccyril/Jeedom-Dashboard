@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/static/css/main.4bd4c83b.chunk.css",
+    "main.js": "/static/js/main.e75e2e8f.chunk.js",
+    "main.js.map": "/static/js/main.e75e2e8f.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.1991d113.js",
+    "runtime-main.js.map": "/static/js/runtime-main.1991d113.js.map",
+    "static/js/2.638a1548.chunk.js": "/static/js/2.638a1548.chunk.js",
+    "static/js/2.638a1548.chunk.js.map": "/static/js/2.638a1548.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.a5ac959183e46a13c9a6f6afcc3333e5.js": "/precache-manifest.a5ac959183e46a13c9a6f6afcc3333e5.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.4bd4c83b.chunk.css.map": "/static/css/main.4bd4c83b.chunk.css.map",
+    "static/media/Backdrop.scss": "/static/media/close.6a0d0875.svg",
+    "static/media/light.svg": "/static/media/light.9eee2013.svg",
+    "static/media/loader.svg": "/static/media/loader.27e2ef14.svg",
+    "static/media/rain.svg": "/static/media/rain.5804a26e.svg",
+    "static/media/Header.scss": "/static/media/settings.c1e11fed.svg",
+    "static/media/sun.svg": "/static/media/sun.3b2f1925.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.1991d113.js",
+    "static/js/2.638a1548.chunk.js",
+    "static/css/main.4bd4c83b.chunk.css",
+    "static/js/main.e75e2e8f.chunk.js"
+  ]
+}
