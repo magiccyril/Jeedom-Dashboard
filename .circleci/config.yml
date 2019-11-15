@@ -1,13 +1,9 @@
 version: 2 # use CircleCI 2.0
 jobs:
-  build:
+  test:
     docker:
       - image: circleci/node:10
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "db:e3:c8:a2:f8:d2:48:81:72:b6:2d:e9:6b:b7:95:30"
-
       - checkout # special step to check out source code to working directory
 
       - restore_cache: # special step to restore the dependency cache
@@ -35,16 +31,30 @@ jobs:
       - store_test_results:
           path: test-results
 
+  deploy:
+    docker:
+      - image: circleci/node:10
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "db:e3:c8:a2:f8:d2:48:81:72:b6:2d:e9:6b:b7:95:30"
+
       - run:
-          name: Deploy
-          command: |
-            git config user.email "magiccyril@gmail.com"
-            git config user.name "Cyril G."
-            npm run deploy
+            name: Deploy
+            command: |
+              git config user.email "magiccyril@gmail.com"
+              git config user.name "Cyril G."
+              npm run deploy
 
 
 workflows:
   version: 2
   Test and Deploy:
     jobs:
-      - build
+      - test
+      - deploy:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
