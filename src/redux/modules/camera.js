@@ -30,7 +30,7 @@ export function cameraImageLoaded(cameraId, imageUrl) {
   return { type: CAMERA_IMAGE_LOADED, payload: { cameraId, imageUrl } }
 }
 export function cameraImageErrored(e) {
-  return { type: CAMERA_IMAGE_ERRORED, payload: e };
+  return { type: CAMERA_IMAGE_ERRORED, error: e };
 }
 
 // Side effects
