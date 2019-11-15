@@ -13,7 +13,7 @@ jobs:
 
       - run:
           name: Install dependencies with NPM
-          command: npm install # replace with `yarn install` if using yarn
+          command: npm install
 
       - save_cache: # special step to save the dependency cache
           key: v1-repo-{{ checksum "package-lock.json" }}
@@ -23,7 +23,7 @@ jobs:
       - run:
           name: Run tests
           # Runs jest with "--maxWorkers=2" argument to avoid OOM issues
-          command: npm test # replace with `yarn test` if using yarn
+          command: npm test
 
       - store_artifacts: 
           path: test-results
@@ -35,11 +35,25 @@ jobs:
     docker:
       - image: circleci/node:10
     steps:
-      - checkout # special step to check out source code to working directory
-
       - add_ssh_keys:
           fingerprints:
             - "db:e3:c8:a2:f8:d2:48:81:72:b6:2d:e9:6b:b7:95:30"
+      
+      - checkout # special step to check out source code to working directory
+
+      - restore_cache: # special step to restore the dependency cache
+          # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+          keys: 
+            - v1-repo-{{ checksum "package-lock.json" }}
+          
+      - run:
+          name: Install dependencies with NPM
+          command: npm install
+
+      - save_cache: # special step to save the dependency cache
+          key: v1-repo-{{ checksum "package-lock.json" }}
+          paths:
+            - "node_modules"
 
       - run:
             name: Deploy
