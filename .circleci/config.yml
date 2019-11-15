@@ -32,15 +32,12 @@ jobs:
           path: test-results
       
       - run:
-          name: Build
-          command: npm run-script build
-      
-      - persist_to_workspace:
-          root: build
-          paths: build
+          name: Deploy
+          command: npm run deploy
+
 
 workflows:
   version: 2
-  Test and Build:
+  Test and Deploy:
     jobs:
       - build
