@@ -3,8 +3,10 @@ import './Header.scss';
 import Summary from '../Summary/Summary';
 
 function Header(props) {
+  const collapsedClassName = props.collapsed ? ' app-header-collapsed' : '';
+
   return (
-    <header className="app-header">
+    <header className={"app-header" + collapsedClassName}>
       <div className="container">
         <a href="#Settings" className="settings-show text-hide" onClick={props.onShowSettings}>Paramètres</a>
 

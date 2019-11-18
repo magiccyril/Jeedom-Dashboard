@@ -3,17 +3,26 @@
 @import "../../../node_modules/bootstrap/scss/mixins";
 
 .app-header {
+  background: $white;
   margin-bottom: 1rem;
+  position: sticky;
+  top: -10.65rem;
+  z-index: 5000;
+  transition: all 0.25s ease-in-out;
 
   .container {
-    padding-bottom: 1rem;
+    padding-bottom: 0.25rem;
     padding-top: 8rem;
     position: relative;
+    transition: all 0.25s ease-in-out;
   }
 
   h1 {
     margin-bottom: 0;
   }
+}
+.app-header-collapsed {
+  box-shadow: 0 0 1rem rgba($black, .15);
 }
 
 .settings-show {

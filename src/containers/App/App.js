@@ -15,10 +15,30 @@ import Snackbar from '../../components/Snackbar/Snackbar';
 import './App.scss';
 
 export class App extends Component {
+  constructor() {
+    super();
+
+    this.state ={
+      collapsedHeader: false,
+    };
+    this.handleScroll = this.handleScroll.bind(this);
+  }
+
+  handleScroll(e) {
+    const threshold = 10.65 * parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+    this.setState({collapsedHeader: window.scrollY > threshold});
+  }
+
   componentDidMount() {
+    window.addEventListener('scroll', this.handleScroll);
     this.props.appLaunchRequested();
     this.props.setSummaryIntervalRegistration();
     this.props.getRooms();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.handleScroll);
   }
 
   render() {
@@ -34,6 +54,7 @@ export class App extends Component {
     return (
       <div className="App" id="App">
         <Header 
+          collapsed={this.state.collapsedHeader}
           onShowSettings={this.props.handleShowSettings}
           summary={this.props.summary} />
 
