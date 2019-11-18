@@ -1,6 +1,9 @@
 version: 2 # use CircleCI 2.0
 jobs:
   test:
+    branches:
+      ignore:
+        - gh-pages
     docker:
       - image: circleci/node:10
     steps:
@@ -32,6 +35,9 @@ jobs:
           path: test-results
 
   deploy:
+    branches:
+      ignore:
+        - gh-pages
     docker:
       - image: circleci/node:10
     steps:
