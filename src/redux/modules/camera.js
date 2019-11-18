@@ -13,9 +13,16 @@ const initialState = {};
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
     case CAMERA_IMAGE_LOADED:
+      const cameraId = action.payload.cameraId;
+      const imageUrl = action.payload.imageUrl;
+
+      if (!cameraId || !imageUrl) {
+        return { ...state };
+      }
+
       return {
         ...state,
-        [action.payload.cameraId]: action.payload.imageUrl,
+        [cameraId]: imageUrl,
       };
 
     default: return state;
@@ -38,22 +45,22 @@ export function* saga() {
   yield takeEvery(CAMERA_IMAGE_REQUESTED, cameraImageRequestSaga);
 }
 
-function* cameraImageRequestSaga(action) {
+export function* cameraImageRequestSaga(action) {
   try {
     const cameraId = action.cameraId;
 
     const settings = yield call(getStorageSettings);
     const equipment = yield call(getJeedomEquipment, cameraId);
-    
-    const cameraUrl = equipment.cmds.filter(el => (
+
+    const cameraUrl = equipment.cmds.find(el => (
       el.generic_type === 'CAMERA_URL'
     ));
     
-    if (cameraUrl.length === 0) {
+    if (cameraUrl === undefined) {
       throw new TypeError('Camera not detected');
     }
 
-    yield put(cameraImageLoaded(cameraId, settings.url + cameraUrl[0].currentValue));
+    yield put(cameraImageLoaded(cameraId, settings.url + cameraUrl.currentValue));
   } catch (e) {
     yield put(cameraImageErrored(e));
   }
