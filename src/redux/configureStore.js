@@ -12,6 +12,7 @@ import camera, { saga as cameraSaga } from './modules/camera';
 import light, { saga as lightSaga } from './modules/light';
 import door, { saga as doorSaga } from './modules/door';
 import mode, { saga as modeSaga } from './modules/mode';
+import thermostat, { saga as thermostatSaga } from './modules/thermostat';
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -28,6 +29,7 @@ const rootReducer = combineReducers({
   light,
   door,
   mode,
+  thermostat,
 });
 
 function* rootSaga() {
@@ -41,6 +43,7 @@ function* rootSaga() {
   yield spawn(lightSaga);
   yield spawn(doorSaga);
   yield spawn(modeSaga);
+  yield spawn(thermostatSaga);
 }
 
 const store = createStore(
