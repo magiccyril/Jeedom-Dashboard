@@ -13,21 +13,14 @@
   .backdrop-background {
     background: #000;
     height: 100%;
-    //opacity: 0.75;
     transition: opacity 0.25s ease-in-out;
     width: 100%;
   }
 
   .backdrop-wrapper {
-    //bottom: 0;
     position: absolute;
     transition: bottom 0.35s ease-in-out;
     width: 100%;
-
-    .container {
-      max-height: 85vh;
-      overflow: auto;
-    }
   }
 
   .backdrop-content {
@@ -36,6 +29,11 @@
     box-shadow: 0px -0.5rem 1rem $gray-800;
     padding-bottom: 1rem;
     padding-top: 1rem;
+  }
+
+  .backdrop-content-scroll {
+    max-height: 75vh;
+    overflow: auto;
   }
 
   .backdrop-close {

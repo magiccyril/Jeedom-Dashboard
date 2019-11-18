@@ -39,7 +39,9 @@ export class Backdrop extends Component {
                 <h3>{this.props.title}</h3>
                 <a href="#App" className="backdrop-close text-hide" onClick={this.handleClose}>Fermer</a>
                 <hr/>
-                {this.props.children}
+                <div className="backdrop-content-scroll">
+                  {this.props.children}
+                </div>
               </div>
             </div>
           </div>
