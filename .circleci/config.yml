@@ -26,13 +26,17 @@ jobs:
       - run:
           name: Run tests
           # Runs jest with "--maxWorkers=2" argument to avoid OOM issues
-          command: npm test
+          command: npm run test:ci
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: "reports/jest/test-results.xml"
+            JEST_JUNIT_CLASSNAME: "{classname}"
+            JEST_JUNIT_TITLE: "{title}"
 
       - store_artifacts: 
-          path: test-results
+          path: reports
 
       - store_test_results:
-          path: test-results
+          path: reports
 
   deploy:
     branches:
