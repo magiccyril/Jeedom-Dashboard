@@ -2,6 +2,8 @@ import React from 'react';
 
 import Backdrop from '../Backdrop/Backdrop';
 
+const HISTORY_LENGTH = 20;
+
 function formatHistoryListItem(element, i) {
   const badgeClassName = element.open ? 'badge-danger' : 'badge-success';
 
@@ -20,12 +22,11 @@ function BackdropDoorHistory(props) {
     return '';
   }
 
-  const historyList = props.history.slice(0, 15).map(formatHistoryListItem);
+  const historyList = props.history.slice(0, HISTORY_LENGTH).map(formatHistoryListItem);
 
   return (
     props.show ?
       <Backdrop title={props.title} onClose={props.onClose}>
-        <p>15 derniers évènements :</p>
         <ul className="list-group list-group-flush">
           {historyList}
         </ul>
