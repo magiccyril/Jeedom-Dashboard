@@ -157,8 +157,6 @@ export function* saga() {
 }
 
 function* doorStatusWithHistoryRequestSaga(action) {
-  //yield fork(doorStatusRequestSaga, action);
-  //yield fork(doorHistoryRequestSaga, action);
   yield putResolve(doorStatusRequested(action.payload));
   yield putResolve(doorHistoryRequested(action.payload));
 }
