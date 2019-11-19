@@ -6,43 +6,36 @@ function CardThermostat(props) {
     return '';
   }
 
+  const overlay = props.thermostat.loading ? 'Chargement...' : '';
+
   const thermostatId = props.thermostat.id;
-  const modesCount = Object.entries(props.thermostat.modes).length;
 
-  let datalistOptions = [];
-  const optionSize = Math.floor(12 / modesCount);
-  for (let [key, value] of Object.entries(props.thermostat.modes)) {
-    datalistOptions.push(<option className={'col-' + optionSize} value={key} label={value} key={key} />);
-  }
+  let thermostat = '';
+  if (props.thermostat.modes) {
+    const modesCount = Object.entries(props.thermostat.modes).length;
 
-  const currentModeIndex = Object.getOwnPropertyNames(props.thermostat.modes).indexOf(props.thermostat.currentMode);
-  
-  const thermostatPower = props.thermostat.power > 0 ? <small>({props.thermostat.power} %)</small> : ''
+    let datalistOptions = [];
+    const optionSize = Math.floor(12 / modesCount);
+    for (let [key, value] of Object.entries(props.thermostat.modes)) {
+      datalistOptions.push(<option className={'col-' + optionSize} value={key} label={value} key={key} />);
+    }
 
-  const handleOnChange = (e) => {
-    e.preventDefault();
-    const step = e.target.value;
-    const modeId = Object.keys(props.thermostat.modes)[step];
+    const currentModeIndex = Object.getOwnPropertyNames(props.thermostat.modes).indexOf(props.thermostat.currentMode);
     
-    props.onModeChange({
-      id: thermostatId,
-      mode: modeId,
-    });
-  }
+    const thermostatPower = props.thermostat.power > 0 ? <small>({props.thermostat.power} %)</small> : ''
 
-  return (
-    <Card title={props.title}>
-      <div className="row align-items-center">
-        <div className="col-4 order-12 text-center">
-          <h2>{props.thermostat.temperature}°</h2>
-          <small>Historique</small>
-        </div>
-        <ul className="col-8 order-1 list-unstyled">
-          <li>Humidité : 23%</li>
-          <li>CO2: 443ppm</li>
-          <li>Bruit: 38dB</li>
-        </ul>
-      </div>
+    const handleOnChange = (e) => {
+      e.preventDefault();
+      const step = e.target.value;
+      const modeId = Object.keys(props.thermostat.modes)[step];
+      
+      props.onModeChange({
+        id: thermostatId,
+        mode: modeId,
+      });
+    }
+    
+    thermostat = <div>
       <hr />
       <div className="form-group text-center">
         <label htmlFor={'thermostat-'+ thermostatId}>Thermostat {thermostatPower}</label>
@@ -60,6 +53,23 @@ function CardThermostat(props) {
           list={'thermostat-marks-'+ thermostatId}
           onChange={handleOnChange} />
       </div>
+    </div>
+  }
+
+  return (
+    <Card title={props.title} overlay={overlay}>
+      <div className="row align-items-center">
+        <div className="col-5 order-12 text-center">
+          <h2>{props.thermostat.temperature}°</h2>
+          <small>Historique</small>
+        </div>
+        <ul className="col-7 order-1 list-unstyled">
+          <li>Humidité : 23%</li>
+          <li>CO2: 443ppm</li>
+          <li>Bruit: 38dB</li>
+        </ul>
+      </div>
+      {thermostat}
     </Card>
   );
 }

@@ -20,6 +20,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         [action.id]: {
+          ...state[action.id],
           id: action.id,
           loading: true,
           error: false,

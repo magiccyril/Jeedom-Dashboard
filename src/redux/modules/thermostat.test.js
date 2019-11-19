@@ -105,6 +105,26 @@ describe('Thermostat', () => {
       expect(reducer([], thermostatRequested(thermostatId))).toEqual(expectedState);
     })
 
+    it('should keep previous state when handling THERMOSTAT_REQUESTED', () => {
+      const thermostatId = 18;
+      const initialThermostat = generateFakeThermostat(thermostatId);
+      initialThermostat.loading = false;
+      initialThermostat.error = false;
+      const initialState = {
+        [thermostatId]: initialThermostat,
+      };
+      const expectedThermostat = {
+        ...initialThermostat,
+        loading: true,
+        error: false,
+      }
+      const expectedState = {
+        [thermostatId]: expectedThermostat,
+      };
+
+      expect(reducer(initialState, thermostatRequested(thermostatId))).toEqual(expectedState);
+    })
+
     it('should handle THERMOSTAT_LOADED', () => {
       const firstThermostatId = 18;
       const firstThermostat = generateFakeThermostat(firstThermostatId);
