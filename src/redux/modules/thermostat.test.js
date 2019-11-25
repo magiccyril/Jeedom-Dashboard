@@ -9,30 +9,9 @@ import reducer, {
   thermostatModeChangeRequested,
   thermostatRequestSaga,
 } from './thermostat';
+import { randomNumber, generateFakeStateThermostat, generateFakeThermostat } from '../utils/fixtures';
 import { put, call } from 'redux-saga/effects'
 import { getJeedomEquipment } from '../utils/jeedom';
-
-const randomNumber = (max, precision = 1) => ( Number.parseFloat(Math.random() * Math.floor(max)).toPrecision(precision) );
-const generateFakeStateThermostat = (id) => ({
-  id: id,
-  loading: false,
-  error: false,
-});
-const generateFakeThermostat = (id) => {
-  const firstMode = randomNumber(999);
-  const secondMode = randomNumber(999);
-  return ({
-    id: id,
-    name: 'Fake thermostat',
-    modes: {
-      [firstMode]: 'First mode',
-      [secondMode]: 'Another mode',
-    },
-    currentMode: firstMode,
-    power: randomNumber(100),
-    temperature: randomNumber(30, 2),
-    setpoint: randomNumber(30, 2),
-  })};
 
 describe('Thermostat', () => {
   describe('Actions', () => {

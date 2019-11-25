@@ -50,13 +50,6 @@ export class CardList extends Component {
   
     return this.formatModeToProps(modeState.currentMode)
   }
-  getModes(modeState) {
-    if (!modeState || !modeState.modes) {
-      return '|...';
-    }
-  
-    return modeState.modes.map(this.formatModeToProps).join('##');
-  }
 
   render() {
     return (
@@ -88,14 +81,10 @@ export class CardList extends Component {
 
           <CardMode
             title="Maison"
-            loading={this.props.houseMode ? this.props.houseMode.loading : false}
-            error={this.props.houseMode ? this.props.houseMode.error : false}
-            equipment={HOUSE_MODE_ID}
-            currentMode={this.getCurrentMode(this.props.houseMode)}
-            modes={this.getModes(this.props.houseMode)}
+            mode={this.props.houseMode}
             onModeClick={this.props.handleChangeMode}
             onRetry={this.handleHouseModeRetry} />
-          
+
           <CardThermostat
             title="Environnement"
             thermostat={this.props.livingThermostat}

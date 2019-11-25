@@ -2,35 +2,39 @@ import React from 'react';
 import Card from '../Card/Card';
 
 function CardMode(props) {
-  const parsePropMode = (propString) => ({
-    id: propString.split('|')[0],
-    name: propString.split('|')[1],
-  });
+  if (!props.mode) {
+    return '';
+  }
 
-  const currentMode = parsePropMode(props.currentMode);
+  const modes = props.mode.modes;
+  const currentModeName = props.mode.currentMode ? props.mode.currentMode.name : 'Indéterminé';
 
-  const modes = props.modes.split('##').map(mode => {
-    const {id, name} = parsePropMode(mode);
-    const disabled = id === currentMode.id;
-
-    const onClick = (e) => {
+  const onModeClickFactory = (equipmentId, cmdId) => (
+    (e) => {
       e.preventDefault();
       const payload = {
-        equipment: props.equipment,
-        cmd: id,
+        id: equipmentId,
+        cmd: cmdId,
       };
       props.onModeClick(payload);
     }
+  );
 
-    return (<button
-      type="button"
-      className="btn btn-primary"
-      onClick={onClick}
-      disabled={disabled}
-      key={id}>
-      {name}
-    </button>)
+  let buttons = '';
+  if (modes) {
+    buttons = modes.map(mode => {
+      const disabled = mode.id === props.mode.currentMode.id;
+
+      return (<button
+        type="button"
+        className="btn btn-primary"
+        onClick={onModeClickFactory(props.mode.id, mode.id)}
+        disabled={disabled}
+        key={mode.id}>
+        {mode.name}
+      </button>)
     });
+  }
 
   const overlay = props.loading ? 'Chargement...' : '';
 
@@ -47,10 +51,10 @@ function CardMode(props) {
 
   return (
     <Card title={props.title} overlay={overlay}>
-      <p className="card-text">Actuellement en mode <strong>{currentMode.name}</strong>.</p>
+      <p className="card-text">Actuellement en mode <strong>{currentModeName}</strong>.</p>
       <div className="text-center">
         <div className="btn-group" role="group" aria-label="Modes">
-          {modes}
+          {buttons}
         </div>
       </div>
     </Card>

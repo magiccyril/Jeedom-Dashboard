@@ -2,7 +2,9 @@ import { takeEvery, call, put, delay } from 'redux-saga/effects';
 import { getJeedomEquipment, execJeedomCmd } from '../utils/jeedom';
 import { showErrorSnackbar } from './snackbar';
 
-const REFRESH_DELAY = 1000;
+export const REFRESH_DELAY = 1000;
+
+export const SNACKBAR_ERROR = 'Erreur lors du changement de mode !';
 
 // Actions
 export const MODE_LIST_REQUESTED = 'MODE_LIST_REQUESTED';
@@ -23,7 +25,9 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         [action.id]: {
           ...state[action.id],
+          id: action.id,
           loading: true,
+          error: false,
         }
       }
     
@@ -32,14 +36,15 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         [action.payload.id]: {
           ...state[action.payload.id],
+          id: action.payload.id,
           loading: false,
           error: true,
         }
       }
 
     case MODE_LIST_LOADED:
-      const cmds = action.payload.cmds;
-      const currentModeValue = cmds.find(el => (el.logicalId === 'currentMode')).currentValue;
+      const equipment = action.payload.equipment;
+      const cmds = equipment.cmds;
 
       let modes = [];
       cmds.forEach(cmd => {
@@ -52,11 +57,13 @@ export default function reducer(state = initialState, action = {}) {
         }
       });
 
+      const currentModeValue = cmds.find(el => (el.logicalId === 'currentMode')).currentValue;
       const currentMode = modes.find(mode => (mode.name === currentModeValue));
 
       return {
         ...state,
         [action.payload.id]: {
+          id: action.payload.id,
           currentMode: currentMode,
           modes: modes,
           loading: false,
@@ -67,17 +74,26 @@ export default function reducer(state = initialState, action = {}) {
     case MODE_CHANGE_REQUESTED:
       return {
         ...state,
-        [action.payload.equipment]: {
-          ...state[action.payload.equipment],
+        [action.payload.id]: {
+          ...state[action.payload.id],
           loading: true,
         }
       }
     
+    case MODE_CHANGE_ERRORED:
+        return {
+          ...state,
+          [action.payload.id]: {
+            ...state[action.payload.id],
+            loading: false,
+          }
+        }
+    
     case MODE_CHANGE_SUCCEEDED:
       return {
         ...state,
-        [action.payload.equipment]: {
-          ...state[action.payload.equipment],
+        [action.payload.id]: {
+          ...state[action.payload.id],
           loading: false,
           error: false,
         }
@@ -92,19 +108,47 @@ export function modeListRequested(id) {
   return { type: MODE_LIST_REQUESTED, id: id }
 }
 export function modeListLoaded(payload) {
-  return { type: MODE_LIST_LOADED, payload: payload }
+  return {
+    type: MODE_LIST_LOADED,
+    payload: {
+      id: payload.id,
+      equipment: payload.equipment,
+    }
+  }
 }
 export function modeListErrored(payload) {
-  return { type: MODE_LIST_ERRORED, payload: payload }
+  return {
+    type: MODE_LIST_ERRORED,
+    payload: {
+      id: payload.id,
+      error: payload.error,
+    }
+  }
 }
 export function modeChangeRequested(payload) {
-  return { type: MODE_CHANGE_REQUESTED, payload: payload }
+  return { type: MODE_CHANGE_REQUESTED,
+    payload: {
+      id: payload.id,
+      cmd: payload.cmd,
+    }
+  }
 }
 export function modeChangeSucceeded(payload) {
-  return { type: MODE_CHANGE_SUCCEEDED, payload: payload }
+  return { type: MODE_CHANGE_SUCCEEDED,
+    payload: {
+      id: payload.id,
+      cmd: payload.cmd,
+    }
+  }
 }
-export function modeChangeErrored(e) {
-  return { type: MODE_CHANGE_ERRORED, payload: e }
+export function modeChangeErrored(payload) {
+  return { type: MODE_CHANGE_ERRORED,
+    payload: {
+      id: payload.id,
+      cmd: payload.cmd,
+      error: payload.error,
+    }
+  }
 }
 
 // Side effects
@@ -113,10 +157,13 @@ export function* saga() {
   yield takeEvery(MODE_CHANGE_REQUESTED, modeChangeRequestSaga);
 }
 
-function* modeListRequestSaga(action) {
+export function* modeListRequestSaga(action) {
   try {
-    const payload = yield call(getJeedomEquipment, action.id);
-    yield put(modeListLoaded(payload));
+    const equipment = yield call(getJeedomEquipment, action.id);
+    yield put(modeListLoaded({
+      id: action.id,
+      equipment
+    }));
   } catch (e) {
     yield put(modeListErrored({
       id: action.id,
@@ -125,18 +172,22 @@ function* modeListRequestSaga(action) {
   }
 }
 
-function* modeChangeRequestSaga(action) {
+export function* modeChangeRequestSaga(action) {
   try {
     yield call(execJeedomCmd, action.payload.cmd);
     yield delay(REFRESH_DELAY);
     yield put(modeChangeSucceeded({
-      equipment: action.payload.equipment,
+      id: action.payload.id,
       cmd: action.payload.cmd,
     }));
   } catch (e) {
-    yield put(modeChangeErrored(e));
-    yield put(showErrorSnackbar('Erreur lors du changement de mode !'));
+    yield put(modeChangeErrored({
+      id: action.payload.id,
+      cmd: action.payload.cmd,
+      error: e,
+    }));
+    yield put(showErrorSnackbar(SNACKBAR_ERROR));
   } finally {
-    yield put(modeListRequested(action.payload.equipment));
+    yield put(modeListRequested(action.payload.id));
   }
 }
