@@ -9,14 +9,15 @@ import reducer, {
   thermostatModeChangeRequested,
   thermostatRequestSaga,
 } from './thermostat';
-import { randomNumber, generateFakeStateThermostat, generateFakeThermostat } from '../utils/fixtures';
+import { randomNumber, generateThermostat, generateThermostatApiResult } from '../utils/fixtures';
 import { put, call } from 'redux-saga/effects'
 import { getJeedomEquipment } from '../utils/jeedom';
 
 describe('Thermostat', () => {
   describe('Actions', () => {
     it('should create an action to request a thermostat', () => {
-      const id = 18;
+      const id = randomNumber(99);
+      
       const expectedAction = {
         type: THERMOSTAT_REQUESTED,
         id,
@@ -25,46 +26,54 @@ describe('Thermostat', () => {
     });
 
     it('should create an action to load a thermostat', () => {
-      const id = 18;
-      const thermostat = generateFakeThermostat(id);
+      const id = randomNumber(99);
+      const thermostat = generateThermostat(id);
+
+      const payload = {
+        id,
+        thermostat,
+      };
 
       const expectedAction = {
         type: THERMOSTAT_LOADED,
-        payload: {
-          id,
-          thermostat,
-        },
+        payload,
       }
 
-      expect(thermostatLoaded(id, thermostat)).toEqual(expectedAction)
+      expect(thermostatLoaded({...payload, uselessParam: false})).toEqual(expectedAction)
     });
 
     it('should create an action to errored a thermostat request', () => {
-      const id = 18;
+      const id = randomNumber(99);
       const error = new Error();
+      
+      const payload = {
+        id,
+        error,
+      };
+
       const expectedAction = {
         type: THERMOSTAT_ERRORED,
-        payload: {
-          id,
-          error,
-        }
+        payload
       }
-      expect(thermostatErrored(id, error)).toEqual(expectedAction)
+      expect(thermostatErrored({...payload, uselessParam: false})).toEqual(expectedAction)
     });
 
     it('should create an action to change the mode of a thermostat', () => {
-      const id = 18;
-      const mode = 222;
+      const id = randomNumber(99);
+      const thermostat = generateThermostat(id);
+      const cmd = thermostat.modes[0].id;
+
+      const payload = {
+        id,
+        cmd,
+      };
 
       const expectedAction = {
         type: THERMOSTAT_MODE_CHANGE_REQUESTED,
-        payload: {
-          id,
-          mode,
-        },
+        payload,
       }
 
-      expect(thermostatModeChangeRequested(id, mode)).toEqual(expectedAction)
+      expect(thermostatModeChangeRequested({...payload, uselessParam: false})).toEqual(expectedAction)
     });
   });
 
@@ -74,242 +83,140 @@ describe('Thermostat', () => {
     })
 
     it('should handle THERMOSTAT_REQUESTED', () => {
-      const thermostatId = 18;
-      const thermostat = generateFakeStateThermostat(thermostatId);
+      const id = randomNumber(99);
+
+      const thermostat = generateThermostat(id);
       thermostat.loading = true;
+      delete thermostat.currentMode;
+      delete thermostat.modes;
+      delete thermostat.name;
+      delete thermostat.power;
+      delete thermostat.setpoint;
+      delete thermostat.temperature;
+
       const expectedState = {
-        [thermostatId]: thermostat,
+        [id]: thermostat,
       };
 
-      expect(reducer([], thermostatRequested(thermostatId))).toEqual(expectedState);
+      expect(reducer([], thermostatRequested(id))).toEqual(expectedState);
     })
 
     it('should keep previous state when handling THERMOSTAT_REQUESTED', () => {
-      const thermostatId = 18;
-      const initialThermostat = generateFakeThermostat(thermostatId);
-      initialThermostat.loading = false;
-      initialThermostat.error = false;
+      const id = randomNumber(99);
+      const thermostat = generateThermostat(id);
+
       const initialState = {
-        [thermostatId]: initialThermostat,
+        [id]: thermostat,
       };
-      const expectedThermostat = {
-        ...initialThermostat,
-        loading: true,
-        error: false,
-      }
+
       const expectedState = {
-        [thermostatId]: expectedThermostat,
+        [id]: {
+          ...thermostat,
+          loading: true,
+          error: false,
+        }
       };
 
-      expect(reducer(initialState, thermostatRequested(thermostatId))).toEqual(expectedState);
-    })
-
-    it('should handle THERMOSTAT_LOADED', () => {
-      const firstThermostatId = 18;
-      const firstThermostat = generateFakeThermostat(firstThermostatId);
-      firstThermostat.loading = false;
-      firstThermostat.error = false;
-      const firstExpectedState = {
-        [firstThermostatId]: firstThermostat,
-      };
-
-      const secondThermostatId = 7;
-      const secondThermostat = generateFakeThermostat(secondThermostatId);
-      secondThermostat.loading = false;
-      secondThermostat.error = false;
-      const secondExpectedState = {
-        [firstThermostatId]: firstThermostat,
-        [secondThermostatId]: secondThermostat,
-      };
-
-      expect(reducer([], thermostatLoaded(firstThermostatId, firstThermostat))).toEqual(firstExpectedState)
-      expect(reducer(firstExpectedState, thermostatLoaded(secondThermostatId, secondThermostat))).toEqual(secondExpectedState)
+      expect(reducer(initialState, thermostatRequested(id))).toEqual(expectedState);
     })
 
     it('should handle THERMOSTAT_ERRORED', () => {
-      const thermostatId = 18;
-      const thermostat = generateFakeStateThermostat(thermostatId);
+      const error = new Error();
+
+      const id = randomNumber(99);
+      const thermostat = generateThermostat(id);
       thermostat.error = true;
+      delete thermostat.currentMode;
+      delete thermostat.modes;
+      delete thermostat.name;
+      delete thermostat.power;
+      delete thermostat.setpoint;
+      delete thermostat.temperature;
+
       const expectedState = {
-        [thermostatId]: thermostat,
+        [id]: thermostat,
       };
 
-      expect(reducer([], thermostatErrored(thermostatId, new Error()))).toEqual(expectedState);
+      expect(reducer([], thermostatErrored({ id, error }))).toEqual(expectedState);
     });
 
     it('should keep previous state after an error', () => {
-      const thermostatId = 18;
-      const initialThermostat = generateFakeThermostat(thermostatId);
-      initialThermostat.loading = false;
-      initialThermostat.error = false;
+      const error = new Error();
+
+      const id = randomNumber(99);
+      const thermostat = generateThermostat(id);
+      
       const initialState = {
-        [thermostatId]: initialThermostat,
-      };
-      const expectedThermostat = {
-        ...initialThermostat,
-        loading: false,
-        error: true,
-      }
-      const expectedState = {
-        [thermostatId]: expectedThermostat,
+        [id]: thermostat,
       };
 
-      expect(reducer(initialState, thermostatErrored(thermostatId, new Error()))).toEqual(expectedState);
+      const expectedState = {
+        [id]: {
+          ...thermostat,
+          error: true,
+        }
+      };
+
+      expect(reducer(initialState, thermostatErrored({ id, error }))).toEqual(expectedState);
+    })
+
+    it('should handle THERMOSTAT_LOADED and keep previous state when handling another', () => {
+      const initialThermostatId = randomNumber(99);
+      const initialThermostat = generateThermostat(initialThermostatId);
+
+      const initialState = {
+        [initialThermostatId]: initialThermostat,
+      };
+
+      const id = randomNumber(99);
+      const thermostat = generateThermostat(id);
+      const expectedState = {
+        ...initialState,
+        [id]: thermostat,
+      };
+
+      expect(reducer([], thermostatLoaded({ id: initialThermostatId, thermostat: initialThermostat }))).toEqual(initialState);
+      expect(reducer(initialState, thermostatLoaded({ id, thermostat }))).toEqual(expectedState);
     })
   });
 
-  
+  // Side effects.
   describe('Side effects', () => {
     it('should dispatch thermostatLoaded', () => {
-      const thermostatId = 18;
-      const expectedThermostat = generateFakeThermostat(thermostatId);
+      const id = randomNumber(99);
+      const thermostat = generateThermostat(id);
+      delete thermostat.loading;
+      delete thermostat.error;
+      const equipmentApiResult = generateThermostatApiResult(thermostat);
 
-      const expectedFirstModeId = Object.keys(expectedThermostat.modes)[0];
-      const expectedSecondModeId = Object.keys(expectedThermostat.modes)[1];
-
-      const equipment = {
-        'id': thermostatId,
-        'name': expectedThermostat.name,
-        'generic_type': null,
-        'eqType_name': 'thermostat',
-        'isVisible': '1',
-        'isEnable': '1',
-        'cmds': [
-          {
-              "id": randomNumber(999),
-              "logicalId": "actif",
-              "generic_type": "THERMOSTAT_STATE",
-              "name": "Actif",
-              "type": "info",
-              "value": null,
-              "isVisible": "0",
-              "currentValue": 1
-          },
-          {
-              "id": randomNumber(999),
-              "logicalId": "off",
-              "generic_type": "THERMOSTAT_SET_MODE",
-              "name": "Off",
-              "type": "action",
-              "value": "",
-              "isVisible": "0",
-              "currentValue": null
-          },
-          {
-              "id": expectedFirstModeId,
-              "logicalId": "modeAction",
-              "generic_type": "THERMOSTAT_SET_MODE",
-              "name": expectedThermostat.modes[expectedFirstModeId],
-              "type": "action",
-              "value": null,
-              "isVisible": "1",
-              "currentValue": null
-          },
-          {
-              "id": randomNumber(999),
-              "logicalId": "temperature",
-              "generic_type": "THERMOSTAT_TEMPERATURE",
-              "name": "Température",
-              "type": "info",
-              "value": "#"+ randomNumber(9999) +"#",
-              "isVisible": "0",
-              "currentValue": expectedThermostat.temperature
-          },
-          {
-              "id": randomNumber(999),
-              "logicalId": "temperature_outdoor",
-              "generic_type": "THERMOSTAT_TEMPERATURE_OUTDOOR",
-              "name": "Temperature extérieure",
-              "type": "info",
-              "value": "#"+ randomNumber(9999) +"#",
-              "isVisible": "0",
-              "currentValue": randomNumber(15, 2)
-          },
-          {
-              "id": randomNumber(999),
-              "logicalId": "thermostat",
-              "generic_type": "THERMOSTAT_SET_SETPOINT",
-              "name": "Thermostat",
-              "type": "action",
-              "value": randomNumber(999),
-              "isVisible": "0",
-              "currentValue": null
-          },
-          {
-              "id": expectedSecondModeId,
-              "logicalId": "modeAction",
-              "generic_type": "THERMOSTAT_SET_MODE",
-              "name": expectedThermostat.modes[expectedSecondModeId],
-              "type": "action",
-              "value": null,
-              "isVisible": "1",
-              "currentValue": null
-          },
-          {
-              "id": randomNumber(999),
-              "logicalId": "order",
-              "generic_type": "THERMOSTAT_SETPOINT",
-              "name": "Consigne",
-              "type": "info",
-              "value": "",
-              "isVisible": "1",
-              "currentValue": expectedThermostat.setpoint,
-          },
-          {
-              "id": randomNumber(999),
-              "logicalId": "mode",
-              "generic_type": "THERMOSTAT_MODE",
-              "name": "Mode",
-              "type": "info",
-              "value": "",
-              "isVisible": "1",
-              "currentValue": expectedThermostat.modes[expectedFirstModeId]
-          },
-          {
-              "id": randomNumber(999),
-              "logicalId": "power",
-              "generic_type": null,
-              "eqType": "thermostat",
-              "name": "Puissance",
-              "type": "info",
-              "value": null,
-              "isVisible": "1",
-              "currentValue": expectedThermostat.power
-          },
-        ]
-      }
-
-      const generator = thermostatRequestSaga(thermostatRequested(thermostatId));
+      const generator = thermostatRequestSaga(thermostatRequested(id));
       
       let next = generator.next();
-      expect(next.value).toEqual(call(getJeedomEquipment, thermostatId));
+      expect(next.value).toEqual(call(getJeedomEquipment, id));
 
-      next = generator.next(equipment);
-      expect(next.value).toEqual(put(thermostatLoaded(thermostatId, expectedThermostat)));
+      next = generator.next(equipmentApiResult);
+      expect(next.value).toEqual(put(thermostatLoaded({ id, thermostat })));
 
       next = generator.next();
       expect(next.done).toEqual(true);
     });
-
+    
     it('should dispatch thermostatErrored', () => {
-      const thermostatId = 18;
+      const error = new TypeError();
 
-      const equipment = {
-        'id': thermostatId,
-        'generic_type': null,
-        'eqType_name': 'thermostat',
-        'isVisible': '1',
-        'isEnable': '1',
-        'cmds': []
-      }
+      const id = randomNumber(99);
+      const thermostat = generateThermostat(id);
+      delete thermostat.loading;
+      delete thermostat.error;
+      const equipmentApiResult = generateThermostatApiResult(thermostat);
 
-      const generator = thermostatRequestSaga(thermostatRequested(thermostatId));
+      const generator = thermostatRequestSaga(thermostatRequested(id));
       
       let next = generator.next();
-      expect(next.value).toEqual(call(getJeedomEquipment, thermostatId));
+      expect(next.value).toEqual(call(getJeedomEquipment, id));
 
-      next = generator.next(equipment);
-      expect(next.value).toEqual(put(thermostatErrored(new TypeError('Error when parsing thermostat'))));
+      next = generator.throw(error);
+      expect(next.value).toEqual(put(thermostatErrored({ id, error })));
 
       next = generator.next();
       expect(next.done).toEqual(true);

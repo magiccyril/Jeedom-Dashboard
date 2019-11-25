@@ -16,9 +16,9 @@ function CardThermostat(props) {
 
     let datalistOptions = [];
     const optionSize = Math.floor(12 / modesCount);
-    for (let [key, value] of Object.entries(props.thermostat.modes)) {
-      datalistOptions.push(<option className={'col-' + optionSize} value={key} label={value} key={key} />);
-    }
+    props.thermostat.modes.forEach((mode) => {
+      datalistOptions.push(<option className={'col-' + optionSize} value={mode.id} label={mode.name} key={mode.id} />);
+    })
 
     const currentModeIndex = Object.getOwnPropertyNames(props.thermostat.modes).indexOf(props.thermostat.currentMode);
     

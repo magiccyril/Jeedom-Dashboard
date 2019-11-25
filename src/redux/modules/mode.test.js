@@ -328,15 +328,15 @@ describe('Mode', () => {
     it('should dispatch modeListLoaded', () => {
       const id = randomNumber(99);
       const mode = generateMode(id);
-      const equipment = generateModeApiResult(mode);
+      const equipmentApiResult = generateModeApiResult(mode);
 
       const generator = modeListRequestSaga(modeListRequested(id));
       
       let next = generator.next();
       expect(next.value).toEqual(call(getJeedomEquipment, id));
 
-      const loadedPayload = { id, equipment };
-      next = generator.next(equipment);
+      const loadedPayload = { id, equipment: equipmentApiResult };
+      next = generator.next(equipmentApiResult);
       expect(next.value).toEqual(put(modeListLoaded(loadedPayload)));
 
       next = generator.next();

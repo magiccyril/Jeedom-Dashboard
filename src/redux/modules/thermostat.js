@@ -11,6 +11,7 @@ export const THERMOSTAT_MODE_CHANGE_REQUESTED = 'THERMOSTAT_MODE_CHANGE_REQUESTE
 const initialState = {};
 
 export default function reducer(state = initialState, action = {}) {
+  let id;
   switch (action.type) {
     case THERMOSTAT_REQUESTED:
       if (!action.id) {
@@ -28,7 +29,9 @@ export default function reducer(state = initialState, action = {}) {
       };
 
     case THERMOSTAT_LOADED:
-      if (!action.payload.id || !action.payload.thermostat) {
+      id = action.payload.id;
+
+      if (!id || !action.payload.thermostat) {
         return { ...state };
       }
 
@@ -37,19 +40,21 @@ export default function reducer(state = initialState, action = {}) {
       loadedThermostat.error = false;
       return {
         ...state,
-        [action.payload.id]: loadedThermostat,
+        [id]: loadedThermostat,
       };
 
     case THERMOSTAT_ERRORED:
-      if (!action.payload.id) {
+      id = action.payload.id;
+
+      if (!id) {
         return { ...state };
       }
 
       return {
         ...state,
-        [action.payload.id]: {
-          ...state[action.payload.id],
-          id: action.payload.id,
+        [id]: {
+          ...state[id],
+          id: id,
           loading: false,
           error: true,
         },
@@ -63,14 +68,32 @@ export default function reducer(state = initialState, action = {}) {
 export function thermostatRequested(id) {
   return { type: THERMOSTAT_REQUESTED, id}
 }
-export function thermostatLoaded(id, thermostat) {
-  return { type: THERMOSTAT_LOADED, payload: { id, thermostat } }
+export function thermostatLoaded(payload) {
+  return {
+    type: THERMOSTAT_LOADED,
+    payload: { 
+      id: payload.id,
+      thermostat: payload.thermostat
+    }
+  }
 }
-export function thermostatErrored(id, error) {
-  return { type: THERMOSTAT_ERRORED, payload: { id, error } };
+export function thermostatErrored(payload) {
+  return {
+    type: THERMOSTAT_ERRORED,
+    payload: {
+      id: payload.id,
+      error: payload.error,
+    }
+  };
 }
-export function thermostatModeChangeRequested(id, mode) {
-  return { type: THERMOSTAT_MODE_CHANGE_REQUESTED, payload: { id, mode } };
+export function thermostatModeChangeRequested(payload) {
+  return {
+    type: THERMOSTAT_MODE_CHANGE_REQUESTED,
+    payload: {
+      id: payload.id,
+      cmd: payload.cmd,
+    }
+  };
 }
 
 // Side effects
@@ -79,9 +102,9 @@ export function* saga() {
 }
 
 export function* thermostatRequestSaga(action) {
-  try {
-    const thermostatId = action.id;
+  const thermostatId = action.id;
 
+  try {
     const equipment = yield call(getJeedomEquipment, thermostatId);
 
     // Name
@@ -90,13 +113,19 @@ export function* thermostatRequestSaga(action) {
     const availableModes = equipment.cmds.filter(el => (
       el.generic_type === 'THERMOSTAT_SET_MODE' && el.isVisible === '1'
     ));
-    let thermostatModes = {};
-    availableModes.forEach(mode => thermostatModes[mode.id] = mode.name);
+    let thermostatModes = [];
+    availableModes.forEach(mode => {
+      thermostatModes.push({
+        id: mode.id,
+        name: mode.name,
+        order: mode.order,
+      })
+    });
     // Current mode
     const currentMode = equipment.cmds.find(el => (
       el.logicalId === 'mode'
     ));
-    const thermostatCurrentMode = Object.keys(thermostatModes).find(key => thermostatModes[key] === currentMode.currentValue);
+    const thermostatCurrentMode = thermostatModes.find(mode => mode.name === currentMode.currentValue);
     // Power
     const thermostatPower = equipment.cmds.find(el => (
       el.logicalId === 'power'
@@ -123,8 +152,16 @@ export function* thermostatRequestSaga(action) {
       temperature: thermostatTemperature.currentValue,
       setpoint: thermostatSetPoint.currentValue,
     }
-    yield put(thermostatLoaded(thermostatId, thermostat));
+
+    const payload = {
+      id: thermostatId,
+      thermostat: thermostat,
+    }
+    yield put(thermostatLoaded(payload));
   } catch (e) {
-    yield put(thermostatErrored(e));
+    yield put(thermostatErrored({
+      id: thermostatId,
+      error: e,
+    }));
   }
 }
