@@ -5,6 +5,8 @@ import reducer, {
   THERMOSTAT_MODE_CHANGE_REQUESTED,
   THERMOSTAT_MODE_CHANGE_ERRORED,
   THERMOSTAT_MODE_CHANGE_SUCCEEDED,
+  CHANGE_MODE_REFRESH_DELAY,
+  CHANGE_MODE_ERROR_SNACKBAR,
   thermostatRequested,
   thermostatLoaded,
   thermostatErrored,
@@ -12,10 +14,12 @@ import reducer, {
   thermostatModeChangeErrored,
   thermostatModeChangeSucceded,
   thermostatRequestSaga,
+  thermostatModeChangeRequestSaga,
 } from './thermostat';
 import { randomNumber, generateThermostat, generateThermostatApiResult } from '../utils/fixtures';
-import { put, call } from 'redux-saga/effects'
-import { getJeedomEquipment } from '../utils/jeedom';
+import { put, call, delay } from 'redux-saga/effects'
+import { getJeedomEquipment, execJeedomCmd } from '../utils/jeedom';
+import { showErrorSnackbar } from './snackbar';
 
 describe('Thermostat', () => {
   describe('Actions', () => {
@@ -211,6 +215,57 @@ describe('Thermostat', () => {
       expect(reducer([], thermostatLoaded({ id: initialThermostatId, thermostat: initialThermostat }))).toEqual(initialState);
       expect(reducer(initialState, thermostatLoaded({ id, thermostat }))).toEqual(expectedState);
     })
+
+    it('should handle THERMOSTAT_MODE_CHANGE_REQUESTED', () => {
+      const id = randomNumber(99);
+      const initialThermostat = generateThermostat(id);
+      const cmd = initialThermostat.modes[0].id;
+
+      const initialState = {
+        [id]: initialThermostat,
+      };
+
+      const expectedState = {
+        [id]: { ...initialThermostat, loading: true},
+      };
+
+      expect(reducer(initialState, thermostatModeChangeRequested({ id, cmd }))).toEqual(expectedState);
+    })
+
+    it('should handle THERMOSTAT_MODE_CHANGE_ERRORED', () => {
+      const id = randomNumber(99);
+      const initialThermostat = generateThermostat(id);
+      initialThermostat.loading = true;
+      const cmd = initialThermostat.modes[0].id;
+      const error = new Error();
+
+      const initialState = {
+        [id]: initialThermostat,
+      };
+
+      const expectedState = {
+        [id]: { ...initialThermostat, loading: false, error: true},
+      };
+
+      expect(reducer(initialState, thermostatModeChangeErrored({ id, cmd, error }))).toEqual(expectedState);
+    })
+
+    it('should handle THERMOSTAT_MODE_CHANGE_SUCCEEDED', () => {
+      const id = randomNumber(99);
+      const initialThermostat = generateThermostat(id);
+      initialThermostat.loading = true;
+      const cmd = initialThermostat.modes[0].id;
+
+      const initialState = {
+        [id]: initialThermostat,
+      };
+
+      const expectedState = {
+        [id]: { ...initialThermostat, loading: false, error: false},
+      };
+
+      expect(reducer(initialState, thermostatModeChangeSucceded({ id, cmd }))).toEqual(expectedState);
+    })
   });
 
   // Side effects.
@@ -241,7 +296,6 @@ describe('Thermostat', () => {
       const thermostat = generateThermostat(id);
       delete thermostat.loading;
       delete thermostat.error;
-      const equipmentApiResult = generateThermostatApiResult(thermostat);
 
       const generator = thermostatRequestSaga(thermostatRequested(id));
       
@@ -250,6 +304,55 @@ describe('Thermostat', () => {
 
       next = generator.throw(error);
       expect(next.value).toEqual(put(thermostatErrored({ id, error })));
+
+      next = generator.next();
+      expect(next.done).toEqual(true);
+    });
+
+    it('should dispatch thermostatModeChangeSucceded', () => {
+      const id = randomNumber(99);
+      const thermostat = generateThermostat(id);
+      delete thermostat.loading;
+      delete thermostat.error;
+      const cmd = thermostat.modes[0].id;
+
+      const generator = thermostatModeChangeRequestSaga(thermostatModeChangeRequested({ id, cmd }));
+      
+      let next = generator.next();
+      expect(next.value).toEqual(call(execJeedomCmd, cmd));
+
+      next = generator.next();
+      expect(next.value).toEqual(delay(CHANGE_MODE_REFRESH_DELAY));
+
+      next = generator.next();
+      expect(next.value).toEqual(put(thermostatRequested(id)));
+
+      next = generator.next();
+      expect(next.done).toEqual(true);
+    });
+
+    it('should dispatch thermostatModeChangeErrored', () => {
+      const error = new TypeError();
+       
+      const id = randomNumber(99);
+      const thermostat = generateThermostat(id);
+      delete thermostat.loading;
+      delete thermostat.error;
+      const cmd = thermostat.modes[0].id;
+
+      const generator = thermostatModeChangeRequestSaga(thermostatModeChangeRequested({ id, cmd }));
+      
+      let next = generator.next();
+      expect(next.value).toEqual(call(execJeedomCmd, cmd));
+
+      next = generator.throw(error);
+      expect(next.value).toEqual(put(thermostatModeChangeErrored({id, cmd, error})));
+
+      next = generator.next();
+      expect(next.value).toEqual(put(showErrorSnackbar(CHANGE_MODE_ERROR_SNACKBAR)));
+
+      next = generator.next();
+      expect(next.value).toEqual(put(thermostatRequested(id)));
 
       next = generator.next();
       expect(next.done).toEqual(true);

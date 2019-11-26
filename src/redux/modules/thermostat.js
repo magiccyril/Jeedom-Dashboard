@@ -1,5 +1,9 @@
-import { takeEvery, call, put } from 'redux-saga/effects';
-import { getJeedomEquipment } from '../utils/jeedom';
+import { takeEvery, takeLeading, call, put, delay } from 'redux-saga/effects';
+import { getJeedomEquipment, execJeedomCmd } from '../utils/jeedom';
+import { showErrorSnackbar } from './snackbar';
+
+export const CHANGE_MODE_REFRESH_DELAY = 1000;
+export const CHANGE_MODE_ERROR_SNACKBAR = "Erreur lors du changement de mode du thermostat !"
 
 // Actions
 export const THERMOSTAT_REQUESTED = 'THERMOSTAT_REQUESTED';
@@ -61,6 +65,42 @@ export default function reducer(state = initialState, action = {}) {
           error: true,
         },
       };
+    
+    case THERMOSTAT_MODE_CHANGE_REQUESTED:
+      id = action.payload.id;
+
+      return {
+        ...state,
+        [id]: {
+          ...state[id],
+          loading: true,
+          error: false,
+        },
+      };
+    
+    case THERMOSTAT_MODE_CHANGE_ERRORED:
+      id = action.payload.id;
+
+      return {
+        ...state,
+        [id]: {
+          ...state[id],
+          loading: false,
+          error: true,
+        },
+      };
+    
+    case THERMOSTAT_MODE_CHANGE_SUCCEEDED:
+      id = action.payload.id;
+
+      return {
+        ...state,
+        [id]: {
+          ...state[id],
+          loading: false,
+          error: false,
+        },
+      };
 
     default: return state;
   }
@@ -120,6 +160,7 @@ export function thermostatModeChangeSucceded(payload) {
 // Side effects
 export function* saga() {
   yield takeEvery(THERMOSTAT_REQUESTED, thermostatRequestSaga);
+  yield takeLeading(THERMOSTAT_MODE_CHANGE_REQUESTED, thermostatModeChangeRequestSaga);
 }
 
 export function* thermostatRequestSaga(action) {
@@ -184,5 +225,20 @@ export function* thermostatRequestSaga(action) {
       id: thermostatId,
       error: e,
     }));
+  }
+}
+
+
+export function* thermostatModeChangeRequestSaga(action) {
+  const { id, cmd } = action.payload;
+
+  try {
+    yield call(execJeedomCmd, cmd);
+    yield delay(CHANGE_MODE_REFRESH_DELAY);
+  } catch (error) {
+    yield put(thermostatModeChangeErrored({id, cmd, error }));
+    yield put(showErrorSnackbar(CHANGE_MODE_ERROR_SNACKBAR));
+  } finally {
+    yield put(thermostatRequested(id));
   }
 }
