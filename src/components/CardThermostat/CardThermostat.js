@@ -1,77 +1,131 @@
-import React from 'react';
+import React, { Component } from 'react';
+import CardWeather from '../CardWeather/CardWeather';
 import Card from '../Card/Card';
 
-function CardThermostat(props) {
-  if (!props.thermostat) {
-    return '';
+
+export class CardThermostat extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      showPower: true,
+      showButtons: false,
+      modeIndex: this.defaultModeIndex(),
+    };
+    
+    this.handleChangeCancel = this.handleChangeCancel.bind(this);
+    this.handleChangeMode = this.handleChangeMode.bind(this);
+    this.handleOnChange = this.handleOnChange.bind(this);
   }
 
-  const overlay = props.thermostat.loading ? 'Chargement...' : '';
+  defaultModeIndex() {
+    let modeIndex = 0;
+    if (this.props && this.props.thermostat && this.props.thermostat.modes) {
+      modeIndex = this.props.thermostat.modes.indexOf(this.props.thermostat.currentMode);
+    }
 
-  const thermostatId = props.thermostat.id;
+    return modeIndex;
+  }
 
-  let thermostat = '';
-  if (props.thermostat.modes) {
-    const modesCount = Object.entries(props.thermostat.modes).length;
+  handleChangeMode(e) {
+    const mode = this.props.thermostat.modes[this.state.modeIndex];
+    this.props.onModeChange({
+      id: this.props.thermostat.id,
+      cmd: mode.id,
+    });
+  }
 
-    let datalistOptions = [];
-    const optionSize = Math.floor(12 / modesCount);
-    props.thermostat.modes.forEach((mode) => {
-      datalistOptions.push(<option className={'col-' + optionSize} value={mode.id} label={mode.name} key={mode.id} />);
+  handleChangeCancel(e) {
+    this.setState({
+      modeIndex: this.defaultModeIndex(),
+      showPower: true,
+      showButtons: false,
     })
+  }
 
-    const currentModeIndex = Object.getOwnPropertyNames(props.thermostat.modes).indexOf(props.thermostat.currentMode);
-    
-    const thermostatPower = props.thermostat.power > 0 ? <small>({props.thermostat.power} %)</small> : ''
+  handleOnChange(e) {
+    e.preventDefault();
 
-    const handleOnChange = (e) => {
-      e.preventDefault();
-      const step = e.target.value;
-      const modeId = Object.keys(props.thermostat.modes)[step];
-      
-      props.onModeChange({
-        id: thermostatId,
-        mode: modeId,
+    const step = e.target.value;
+    this.setState({modeIndex: step});
+
+    if (this.props.thermostat.modes[step].id === this.props.thermostat.currentMode.id) {
+      this.setState({
+        showPower: true,
+        showButtons: false,
       });
     }
-    
-    thermostat = <div>
-      <hr />
-      <div className="form-group text-center">
-        <label htmlFor={'thermostat-'+ thermostatId}>Thermostat {thermostatPower}</label>
-        <datalist id={'thermostat-marks-'+ thermostatId} className="row text-center">
-          {datalistOptions}
-        </datalist>
-        <input
-          type="range"
-          className="custom-range"
-          id={'thermostat-'+ thermostatId}
-          min="0"
-          max={modesCount - 1}
-          step="1"
-          defaultValue={currentModeIndex}
-          list={'thermostat-marks-'+ thermostatId}
-          onChange={handleOnChange} />
-      </div>
-    </div>
+    else {
+      this.setState({
+        showPower: false,
+        showButtons: true,
+      });
+    }
   }
 
-  return (
-    <Card title={props.title} overlay={overlay}>
-      <div className="row align-items-center">
-        <div className="col-5 order-12 text-center">
-          <h2>{props.thermostat.temperature}°</h2>
-          <small>Historique</small>
+  render() {
+    if (!this.props.thermostat) {
+      return '';
+    }
+
+    if (this.props.thermostat.loading || this.props.thermostat.modes === undefined) {
+      return <Card title={this.props.title} overlay='Chargement ...'></Card>
+    }
+
+    if (this.props.thermostat.error) {
+      return <Card title={this.props.title}>Erreur à gérer</Card>
+    }
+
+    const thermostatId = this.props.thermostat.id;
+
+    const modes = this.props.thermostat.modes;
+
+    let datalistOptions = [];
+    const optionSize = Math.floor(12 / modes.length);
+    modes.forEach((mode) => {
+      datalistOptions.push(<option className={'col-' + optionSize} value={mode.id} label={mode.name} key={mode.id} />);
+    })
+      
+    const power = this.props.thermostat.power > 0 ?
+      <span>Chauffe actuellement à {this.props.thermostat.power} %</span> : 
+      <span>Ne chauffe pas actuellement</span>
+
+    const changeButtons = <div>
+      <button className="btn btn-sm btn-primary" onClick={this.handleChangeMode}>Valider</button>
+      <button className="btn btn-sm" onClick={this.handleChangeCancel}>Annuler</button>
+    </div>;
+
+    return (
+      <CardWeather
+        title={this.props.title}
+        temperature={this.props.thermostat.temperature}>
+        <div>
+          <hr />
+          <div className="form-group text-center">
+          <label htmlFor={'thermostat-'+ thermostatId}>Thermostat</label>
+          <datalist id={'thermostat-marks-'+ thermostatId} className="row text-center">
+            {datalistOptions}
+          </datalist>
+          <input
+            type="range"
+            className="custom-range"
+            id={'thermostat-'+ thermostatId}
+            min="0"
+            max={modes.length - 1}
+            step="1"
+            value={this.state.modeIndex}
+            list={'thermostat-marks-'+ thermostatId}
+            onChange={this.handleOnChange} />
+        
+            <div className="form-text">
+              {this.state.showPower ? power : ''}
+              {this.state.showButtons ? changeButtons : ''}
+            </div>
+          </div>
         </div>
-        <ul className="col-7 order-1 list-unstyled">
-          <li>Humidité : 23%</li>
-          <li>CO2: 443ppm</li>
-          <li>Bruit: 38dB</li>
-        </ul>
-      </div>
-      {thermostat}
-    </Card>
-  );
+      </CardWeather>
+    );
+  }
 }
 
 export default CardThermostat;
