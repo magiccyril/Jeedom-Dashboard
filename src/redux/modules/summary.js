@@ -25,12 +25,18 @@ export default function reducer(state = initialState, action = {}) {
       const outsideTemperature = cmds.find(el => (el.name === 'temp-outside'));
       const outsideRain = cmds.find(el => (el.name === 'rain'));
       const light = cmds.find(el => (el.name === 'light'));
+      const presenceCyril = cmds.find(el => (el.name === 'presence-cyril'));
+      const presenceHelena = cmds.find(el => (el.name === 'presence-helena'));
 
       return {
         homeTemperature: homeTemperature ? parseFloat(homeTemperature.currentValue).toFixed(1) : '-',
         outsideTemperature: outsideTemperature ? outsideTemperature.currentValue : '-',
         outsideRain: outsideRain ? outsideRain.currentValue : '-',
         light: light.currentValue,
+        presence: {
+          cyril: presenceCyril.currentValue,
+          helena: presenceHelena.currentValue,
+        }
       };
 
     default: return state;
