@@ -6,6 +6,8 @@ export const THERMOSTAT_REQUESTED = 'THERMOSTAT_REQUESTED';
 export const THERMOSTAT_LOADED = 'THERMOSTAT_LOADED';
 export const THERMOSTAT_ERRORED = 'THERMOSTAT_ERRORED';
 export const THERMOSTAT_MODE_CHANGE_REQUESTED = 'THERMOSTAT_MODE_CHANGE_REQUESTED';
+export const THERMOSTAT_MODE_CHANGE_ERRORED = 'THERMOSTAT_MODE_CHANGE_ERRORED';
+export const THERMOSTAT_MODE_CHANGE_SUCCEEDED = 'THERMOSTAT_MODE_CHANGE_SUCCEEDED';
 
 // Reducer
 const initialState = {};
@@ -89,6 +91,25 @@ export function thermostatErrored(payload) {
 export function thermostatModeChangeRequested(payload) {
   return {
     type: THERMOSTAT_MODE_CHANGE_REQUESTED,
+    payload: {
+      id: payload.id,
+      cmd: payload.cmd,
+    }
+  };
+}
+export function thermostatModeChangeErrored(payload) {
+  return {
+    type: THERMOSTAT_MODE_CHANGE_ERRORED,
+    payload: {
+      id: payload.id,
+      cmd: payload.cmd,
+      error: payload.error,
+    }
+  };
+}
+export function thermostatModeChangeSucceded(payload) {
+  return {
+    type: THERMOSTAT_MODE_CHANGE_SUCCEEDED,
     payload: {
       id: payload.id,
       cmd: payload.cmd,

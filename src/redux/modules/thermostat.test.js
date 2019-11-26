@@ -3,10 +3,14 @@ import reducer, {
   THERMOSTAT_LOADED,
   THERMOSTAT_ERRORED,
   THERMOSTAT_MODE_CHANGE_REQUESTED,
+  THERMOSTAT_MODE_CHANGE_ERRORED,
+  THERMOSTAT_MODE_CHANGE_SUCCEEDED,
   thermostatRequested,
   thermostatLoaded,
   thermostatErrored,
   thermostatModeChangeRequested,
+  thermostatModeChangeErrored,
+  thermostatModeChangeSucceded,
   thermostatRequestSaga,
 } from './thermostat';
 import { randomNumber, generateThermostat, generateThermostatApiResult } from '../utils/fixtures';
@@ -63,10 +67,7 @@ describe('Thermostat', () => {
       const thermostat = generateThermostat(id);
       const cmd = thermostat.modes[0].id;
 
-      const payload = {
-        id,
-        cmd,
-      };
+      const payload = { id, cmd };
 
       const expectedAction = {
         type: THERMOSTAT_MODE_CHANGE_REQUESTED,
@@ -74,6 +75,38 @@ describe('Thermostat', () => {
       }
 
       expect(thermostatModeChangeRequested({...payload, uselessParam: false})).toEqual(expectedAction)
+    });
+
+    it('should create an action to errored a mode change of a thermostat', () => {
+      const id = randomNumber(99);
+      const thermostat = generateThermostat(id);
+      const cmd = thermostat.modes[0].id;
+
+      const error = new Error();
+
+      const payload = { id, cmd, error };
+
+      const expectedAction = {
+        type: THERMOSTAT_MODE_CHANGE_ERRORED,
+        payload,
+      }
+
+      expect(thermostatModeChangeErrored({...payload, uselessParam: false})).toEqual(expectedAction)
+    });
+
+    it('should create an action to succeeded a mode change of a thermostat', () => {
+      const id = randomNumber(99);
+      const thermostat = generateThermostat(id);
+      const cmd = thermostat.modes[0].id;
+
+      const payload = { id, cmd };
+
+      const expectedAction = {
+        type: THERMOSTAT_MODE_CHANGE_SUCCEEDED,
+        payload,
+      }
+
+      expect(thermostatModeChangeSucceded({...payload, uselessParam: false})).toEqual(expectedAction)
     });
   });
 
