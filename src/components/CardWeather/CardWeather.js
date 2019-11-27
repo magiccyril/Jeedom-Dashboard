@@ -47,7 +47,6 @@ function CardWeather(props) {
   Object.keys(WEATHER_ITEMS_NAME).forEach((item) => {
     items.push(formatWeatherItem(WEATHER_ITEMS_NAME[item], weatherItems[item]))
   })
-
   if (items.length > 0) {
     items = <ul className="col-7 order-1 list-unstyled">{items}</ul>
   }

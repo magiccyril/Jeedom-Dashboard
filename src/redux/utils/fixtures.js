@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 export const randomNumber = (max, precision = 1) => ( Number.parseFloat(Math.random() * Math.floor(max)).toPrecision(precision) );
 
 // Thermostat
@@ -282,6 +284,15 @@ export const generateWeather = (id, withRainAndWind = false) => {
     }
   }
 
+  Object.keys(weather).forEach((item) => (
+    weather[item].history = {
+      loading: false,
+      error: false,
+      show: false,
+      data: [],
+    }
+  ))
+
   return {
     id: id,
     loading: false,
@@ -359,3 +370,20 @@ export const generateWeatherApiResult = (weatherState) => {
     cmds,
   }
 };
+export const generateWeatherHistory = () => {
+  const now = DateTime.local();
+  let results = [];
+  for (let i = 0; i < 1000; i++) {
+    results.push({
+      value: randomNumber(50, 2),
+      datetime: now.minus({hours: i}).set({millisecond: 0})
+    })
+  }
+
+  return results;
+}
+export const generateWeatherHistoryApiResult = (cmdId, historyState) => (historyState.map(item => ({
+  ...item,
+  datetime: item.datetime.toFormat('yyyy-LL-dd HH:mm:ss'),
+  cmd_id: cmdId,
+})))
