@@ -210,3 +210,152 @@ export const generateModeApiResult = (modeState) => {
     cmds,
   }
 };
+
+// Weather
+export const generateWeather = (id, withRainAndWind = false) => {
+  let weather = {
+    temperature: {
+      id: randomNumber(9999),
+      value: randomNumber(25, 2),
+      unit: '°C',
+      isHistorized: true,
+    },
+    humidity: {
+      id: randomNumber(9999),
+      value: randomNumber(80, 2),
+      unit: '%',
+      isHistorized: true,
+    },
+    co2: {
+      id: randomNumber(9999),
+      value: randomNumber(600),
+      unit: 'ppm',
+      isHistorized: true,
+    },
+    brightness: {
+      id: randomNumber(9999),
+      value: randomNumber(600),
+      unit: 'lm',
+      isHistorized: true,
+    },
+    noise: {
+      id: randomNumber(9999),
+      value: randomNumber(60),
+      unit: 'dB',
+      isHistorized: true,
+    },
+    presure: {
+      id: randomNumber(9999),
+      value: 1000 + randomNumber(50, 2),
+      unit: 'Pa',
+      isHistorized: true,
+    },
+  };
+
+  if (withRainAndWind) {
+    weather = {
+      ...weather,
+      rainCurrent: {
+        id: randomNumber(9999),
+        value: randomNumber(2, 3),
+        unit: 'mm/h',
+        isHistorized: false,
+      },
+      rainTotal: {
+        id: randomNumber(9999),
+        value: randomNumber(9, 2),
+        unit: 'mm',
+        isHistorized: true,
+      },
+      windSpeed: {
+        id: randomNumber(9999),
+        value: randomNumber(50),
+        unit: 'km/h',
+        isHistorized: true,
+      },
+      windDirection: {
+        id: randomNumber(9999),
+        value: randomNumber(360),
+        unit: '°',
+        isHistorized: true,
+      },
+    }
+  }
+
+  return {
+    id: id,
+    loading: false,
+    error: false,
+    weather,
+  }
+}
+const generateWeatherApiCmd = (item) => ({
+    id: item.id,
+    generic_type: item.generic_type,
+    name: item.name ? item.name : 'Item ' + item.id,
+    order: item.order,
+    eqLogic_id: item.weatherId,
+    isHistorized: item.isHistorized ? item.isHistorized.toString() : '0',
+    unite: item.unit ? item.unit : '',
+    value: item.value ? item.value : '#'+ randomNumber(9999) +'#',
+    isVisible: item.isVisible,
+    currentValue: item.value,
+})
+const mapWeatherKeyToGenericType = (key) => {
+  switch (key) {
+    case 'temperature': return 'TEMPERATURE';
+    case 'humidity': return 'HUMIDITY';
+    case 'co2': return 'CO2';
+    case 'brightness': return 'BRIGHTNESS';
+    case 'noise': return 'NOISE';
+    case 'presure': return 'PRESSURE';
+    case 'rainCurrent': return 'RAIN_CURRENT';
+    case 'rainTotal': return 'RAIN_TOTAL';
+    case 'windSpeed': return 'WIND_SPEED';
+    case 'windDirection': return 'WIND_DIRECTION';
+    default: return key;
+  }
+}
+export const generateWeatherApiResult = (weatherState) => {
+  let cmds = [];
+  Object.keys(weatherState.weather).forEach((key, i) => {
+    cmds.push(generateWeatherApiCmd({
+      ...weatherState.weather[key],
+      generic_type: mapWeatherKeyToGenericType(key),
+      weatherId: weatherState.id,
+      order: i,
+      isVisible: '1',
+    }));
+  })
+  
+  cmds.push(generateWeatherApiCmd({
+    id: randomNumber(9999),
+    generic_type: null,
+    name: 'Rafraichir',
+    order: randomNumber(99),
+    eqLogic_id: weatherState.id,
+    isHistorized: '0',
+    value: null,
+    isVisible: '1',
+    currentValue: null,
+  }));
+
+  cmds.push(generateWeatherApiCmd({
+    id: randomNumber(9999),
+    generic_type: 'UNSUPPORTED_TYPE',
+    name: 'Rafale',
+    order: randomNumber(99),
+    eqLogic_id: weatherState.id,
+    isHistorized: '1',
+    isVisible: '1',
+    currentValue: randomNumber(50),
+  }));
+
+  return {
+    "id": weatherState.id,
+    "name": "Fake weather",
+    "generic_type": null,
+    "isEnable": "1",
+    cmds,
+  }
+};

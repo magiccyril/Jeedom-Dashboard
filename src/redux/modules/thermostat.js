@@ -228,7 +228,6 @@ export function* thermostatRequestSaga(action) {
   }
 }
 
-
 export function* thermostatModeChangeRequestSaga(action) {
   const { id, cmd } = action.payload;
 

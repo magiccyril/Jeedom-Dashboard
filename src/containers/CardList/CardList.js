@@ -6,10 +6,19 @@ import CardDoor from '../../components/CardDoor/CardDoor';
 import CardLight from '../../components/CardLights/CardLights';
 import CardMode from '../../components/CardMode/CardMode';
 import CardThermostat from '../../components/CardThermostat/CardThermostat';
+import CardWeather from '../../components/CardWeather/CardWeather';
 import { allLightStatusRequested, allLightsOffRequested } from '../../redux/modules/light';
 import { doorStatusWithHistoryRequested, doorHistoryShow, doorHistoryHide } from '../../redux/modules/door';
-import { modeListRequested, modeChangeRequested } from "../../redux/modules/mode";
-import { HOUSE_MODE_ID, LIVING_CAMERA_ID, GARAGE_CAMERA_ID, LIVING_THERMOSTAT_ID } from '../../constants/equipments';
+import { modeListRequested, modeChangeRequested } from '../../redux/modules/mode';
+import { weatherRequested } from '../../redux/modules/weather';
+import {
+  HOUSE_MODE_ID,
+  LIVING_CAMERA_ID,
+  GARAGE_CAMERA_ID,
+  LIVING_THERMOSTAT_ID,
+  LIVING_WEATHER_ID,
+  OUTDOOR_WEATHER_ID,
+} from '../../constants/equipments';
 import { GARAGE_DOOR_CMD, ENTRY_DOOR_CMD } from '../../constants/commands';
 import { cameraImageRequested } from '../../redux/modules/camera';
 import { thermostatRequested, thermostatModeChangeRequested } from '../../redux/modules/thermostat';
@@ -30,6 +39,8 @@ export class CardList extends Component {
     this.props.getCameraImage(LIVING_CAMERA_ID);
     this.props.getMode(HOUSE_MODE_ID);
     this.props.getThermostat(LIVING_THERMOSTAT_ID);
+    this.props.getWeather(LIVING_WEATHER_ID);
+    this.props.getWeather(OUTDOOR_WEATHER_ID);
   }
 
   handleHouseModeRetry() {
@@ -88,7 +99,12 @@ export class CardList extends Component {
           <CardThermostat
             title="Environnement"
             thermostat={this.props.livingThermostat}
+            weather={this.props.livingWeather}
             onModeChange={this.props.handleThermostatModeChange} />
+
+          <CardWeather
+            title="Extérieur"
+            weather={this.props.outdoorWeather} />
         </div>
       </div>
     );
@@ -102,7 +118,9 @@ const mapStateToProps = (state) => ({
   garageCameraImage: state.camera[GARAGE_CAMERA_ID],
   livingCameraImage: state.camera[LIVING_CAMERA_ID],
   houseMode: state.mode[HOUSE_MODE_ID],
-  livingThermostat: state.thermostat[LIVING_THERMOSTAT_ID]
+  livingThermostat: state.thermostat[LIVING_THERMOSTAT_ID],
+  livingWeather: state.weather[LIVING_WEATHER_ID],
+  outdoorWeather: state.weather[OUTDOOR_WEATHER_ID],
 });
 
 const mapDispatchToProps = {
@@ -116,6 +134,7 @@ const mapDispatchToProps = {
   handleChangeMode: modeChangeRequested,
   getThermostat: thermostatRequested,
   handleThermostatModeChange: thermostatModeChangeRequested,
+  getWeather: weatherRequested,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CardList);
