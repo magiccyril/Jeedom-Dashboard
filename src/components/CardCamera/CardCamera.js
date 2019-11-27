@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Card from '../Card/Card';
 
+const REFRESH_DELAY = 5 * 1000;
+
 export class CardCamera extends Component {
   constructor() {
     super();
@@ -10,7 +12,7 @@ export class CardCamera extends Component {
   }
 
   componentDidMount() {
-    //setInterval(() => this.setState({ time: Date.now() }), 10000);
+    setInterval(() => this.setState({ time: Date.now() }), REFRESH_DELAY);
   }
 
   render() {
