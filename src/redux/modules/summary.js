@@ -14,6 +14,10 @@ const initialState = {
   homeTemperature: '-',
   outsideTemperature: '-',
   outsideRain: '-',
+  presence: {
+    cyril: false,
+    helena: false,
+  }
 };
 
 export default function reducer(state = initialState, action = {}) {
@@ -34,8 +38,8 @@ export default function reducer(state = initialState, action = {}) {
         outsideRain: outsideRain ? outsideRain.currentValue : '-',
         light: light.currentValue,
         presence: {
-          cyril: presenceCyril.currentValue,
-          helena: presenceHelena.currentValue,
+          cyril: presenceCyril.currentValue === 1 ? true : false,
+          helena: presenceHelena.currentValue === 1 ? true : false,
         }
       };
 

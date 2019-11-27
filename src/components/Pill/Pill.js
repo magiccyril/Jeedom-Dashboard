@@ -2,21 +2,19 @@ import React from 'react';
 import './Pill.scss';
 
 function Pill(props) {
-  const pillImageUrl = props.image;
   let pillImage = '';
-  if (pillImageUrl) {
-    const pillImgStyle = {
-      backgroundImage: 'url(' + pillImageUrl + ')'
-    };
-    let pillClassName = ['pill-img'];
-    if (props.text) {
-      pillClassName.push('pill-img-with-text');
-    }
-    else {
-      pillClassName.push('pill-img-no-text');
-    }
 
-    pillImage = <span className={pillClassName.join(' ')} style={pillImgStyle}>&nbsp;</span>;
+  if (props.image) {
+    const pillImgStyle = {
+      backgroundImage: 'url(' + props.image + ')'
+    };
+
+    let imgClassName = ['pill-img'];
+    imgClassName.push(props.text !== undefined ?
+      'pill-img-with-text' : 'pill-img-no-text'
+    );
+
+   pillImage = <span className={imgClassName.join(' ')} style={pillImgStyle}>&nbsp;</span>;
   }
   
   return (
