@@ -268,7 +268,7 @@ export function* weatherRequestSaga(action) {
           id: item.id,
           value: item.currentValue,
           unit: item.unite,
-          isHistorized: item.isHistorized === 'true',
+          isHistorized: item.isHistorized === '1',
           history: {
             loading: false,
             error: false,
