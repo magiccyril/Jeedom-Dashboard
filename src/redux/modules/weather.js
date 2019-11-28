@@ -22,6 +22,8 @@ export const WEATHER_ERRORED = 'WEATHER_ERRORED';
 export const WEATHER_HISTORY_REQUESTED = 'WEATHER_HISTORY_REQUESTED';
 export const WEATHER_HISTORY_LOADED = 'WEATHER_HISTORY_LOADED';
 export const WEATHER_HISTORY_ERRORED = 'WEATHER_HISTORY_ERRORED';
+export const WEATHER_HISTORY_SHOWN = 'WEATHER_HISTORY_SHOWN';
+export const WEATHER_HISTORY_HIDED = 'WEATHER_HISTORY_HIDED';
 
 // Reducer
 const initialState = {};
@@ -136,6 +138,36 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         [weatherId]: weatherState,
       };
+    
+    case WEATHER_HISTORY_SHOWN:
+      weatherId = action.payload.id;
+      weatherItem = action.payload.item;
+
+      weatherState = { ...state[weatherId] };
+      weatherState.weather[weatherItem].history = {
+        ...weatherState.weather[weatherItem].history,
+        show: true,
+      }
+
+      return {
+        ...state,
+        [weatherId]: weatherState,
+      };
+    
+    case WEATHER_HISTORY_HIDED:
+      weatherId = action.payload.id;
+      weatherItem = action.payload.item;
+
+      weatherState = { ...state[weatherId] };
+      weatherState.weather[weatherItem].history = {
+        ...weatherState.weather[weatherItem].history,
+        show: false,
+      }
+
+      return {
+        ...state,
+        [weatherId]: weatherState,
+      };
 
     default: return state;
   }
@@ -192,11 +224,30 @@ export function weatherHistoryErrored(payload) {
     }
   };
 }
+export function weatherHistoryShow(payload) {
+  return {
+    type: WEATHER_HISTORY_SHOWN,
+    payload: {
+      id: payload.id,
+      item: payload.item,
+    }
+  };
+}
+export function weatherHistoryHide(payload) {
+  return {
+    type: WEATHER_HISTORY_HIDED,
+    payload: {
+      id: payload.id,
+      item: payload.item,
+    }
+  };
+}
 
 // Side effects
 export function* saga() {
   yield takeEvery(WEATHER_REQUESTED, weatherRequestSaga);
   yield takeEvery(WEATHER_HISTORY_REQUESTED, weatherHistoryRequestSaga);
+  yield takeEvery(WEATHER_HISTORY_SHOWN, weatherHistoryShowSaga);
 }
 
 export function* weatherRequestSaga(action) {
@@ -243,14 +294,14 @@ export function* weatherRequestSaga(action) {
   }
 }
 
-export const getWeatherItemCommandId = (state, { id, item }) => state[id].weather[item].id;
+export const getWeatherItemCommandId = (state, { id, item }) => state.weather[id].weather[item].id;
 
 export function* weatherHistoryRequestSaga(action) {
   try {
     const id = action.payload.id;
     const item = action.payload.item;
 
-    const cmd = yield select(getWeatherItemCommandId, { id, item })
+    const cmd = yield select(getWeatherItemCommandId, { id, item });
     const history = yield call(getJeedomCommandHistory, cmd);
 
     const payload = {
@@ -266,4 +317,11 @@ export function* weatherHistoryRequestSaga(action) {
       error,
     }));
   }
+}
+
+export function* weatherHistoryShowSaga(action) {
+  yield put(weatherHistoryRequested({
+    id: action.payload.id,
+    item: action.payload.item,
+  }));
 }

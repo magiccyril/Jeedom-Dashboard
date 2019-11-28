@@ -1,19 +1,25 @@
-import reducer, { 
+import reducer, {
+  WEATHER_HISTORY_DEFAULT_DAYS_NUMBER,
   WEATHER_REQUESTED,
   WEATHER_LOADED,
   WEATHER_ERRORED,
   WEATHER_HISTORY_REQUESTED,
   WEATHER_HISTORY_LOADED,
   WEATHER_HISTORY_ERRORED,
+  WEATHER_HISTORY_SHOWN,
+  WEATHER_HISTORY_HIDED,
   weatherRequested,
   weatherLoaded,
   weatherErrored,
   weatherHistoryRequested,
   weatherHistoryLoaded,
   weatherHistoryErrored,
+  weatherHistoryShow,
+  weatherHistoryHide,
   weatherRequestSaga,
   weatherHistoryRequestSaga,
   getWeatherItemCommandId,
+  weatherHistoryShowSaga,
 } from './weather';
 import {
   randomNumber,
@@ -122,6 +128,38 @@ describe('Weather', () => {
         payload
       }
       expect(weatherHistoryErrored({...payload, uselessParam: false})).toEqual(expectedAction)
+    });
+
+    it('should create an action to show a weather item history', () => {
+      const id = randomNumber(99);
+      const item = 'humidity';
+      
+      const payload = {
+        id,
+        item,
+      };
+
+      const expectedAction = {
+        type: WEATHER_HISTORY_SHOWN,
+        payload
+      }
+      expect(weatherHistoryShow({...payload, uselessParam: false})).toEqual(expectedAction)
+    });
+
+    it('should create an action to hide a weather item history', () => {
+      const id = randomNumber(99);
+      const item = 'humidity';
+      
+      const payload = {
+        id,
+        item,
+      };
+
+      const expectedAction = {
+        type: WEATHER_HISTORY_HIDED,
+        payload
+      }
+      expect(weatherHistoryHide({...payload, uselessParam: false})).toEqual(expectedAction)
     });
   });
 
@@ -329,6 +367,66 @@ describe('Weather', () => {
 
       expect(reducer(initialState, weatherHistoryLoaded(payload))).toEqual(expectedState);
     })
+
+    it('should handle WEATHER_HISTORY_SHOWN', () => {
+      const id = randomNumber(99);
+      let weather = generateWeather(id, true);
+      const item = 'humidity';
+
+      weather.weather[item].history = {
+        data: [],
+        loading: false,
+        error: false,
+        show: false,
+      }
+
+      const initialState = {
+        [id]: weather,
+      };
+
+      const payload = {
+        id,
+        item,
+      };
+
+      let expectedState = cloneDeep(initialState);
+      expectedState[id].weather[item].history = {
+        ...expectedState[id].weather[item].history,
+        show: true,
+      }
+
+      expect(reducer(initialState, weatherHistoryShow(payload))).toEqual(expectedState);
+    })
+
+    it('should handle WEATHER_HISTORY_HIDE', () => {
+      const id = randomNumber(99);
+      let weather = generateWeather(id, true);
+      const item = 'humidity';
+      weather.weather[item].history = {
+        data: [],
+        loading: false,
+        error: false,
+        show: true,
+      }
+
+      const initialState = {
+        [id]: weather,
+      };
+
+      const payload = {
+        id,
+        item,
+      };
+
+      let expectedState = cloneDeep(initialState);
+      expectedState[id].weather[item].history = {
+        ...expectedState[id].weather[item].history,
+        show: false,
+      }
+
+      expect(reducer(initialState, weatherHistoryHide(payload))).toEqual(expectedState);
+    })
+    
   });
 
   // Side effects.
@@ -417,6 +515,19 @@ describe('Weather', () => {
 
       next = generator.throw(error);
       expect(next.value).toEqual(put(weatherHistoryErrored({ id, item, error })));
+
+      next = generator.next();
+      expect(next.done).toEqual(true);
+    });
+
+    it('should dispatch weatherHistoryRequested', () => {
+      const id = randomNumber(99);
+      const item = 'humidity';
+
+      const generator = weatherHistoryShowSaga(weatherHistoryShow({id, item}));
+      
+      let next = generator.next();
+      expect(next.value).toEqual(put(weatherHistoryRequested({ id, item })));
 
       next = generator.next();
       expect(next.done).toEqual(true);
