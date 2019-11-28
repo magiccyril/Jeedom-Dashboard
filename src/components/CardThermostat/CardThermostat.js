@@ -109,7 +109,9 @@ export class CardThermostat extends Component {
     return (
       <CardWeather
         title={this.props.title}
-        weather={this.props.weather}>
+        weather={this.props.weather}
+        onHistoryClick={this.props.onHistoryClick}
+        onHistoryClose={this.props.onHistoryClose} >
         <div>
           <hr />
           <div className="form-group text-center thermostat-form-group">

@@ -95,7 +95,9 @@ export class CardList extends Component {
             title="Environnement"
             thermostat={this.props.livingThermostat}
             weather={this.props.livingWeather}
-            onModeChange={this.props.handleThermostatModeChange} />
+            onModeChange={this.props.handleThermostatModeChange}
+            onHistoryClick={this.props.handleWeatherHistoryShow}
+            onHistoryClose={this.props.handleWeatherHistoryClose} />
 
           <CardWeather
             title="Extérieur"
