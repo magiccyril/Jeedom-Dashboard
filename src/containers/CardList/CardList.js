@@ -10,7 +10,7 @@ import CardWeather from '../../components/CardWeather/CardWeather';
 import { allLightStatusRequested, allLightsOffRequested } from '../../redux/modules/light';
 import { doorStatusWithHistoryRequested, doorHistoryShow, doorHistoryHide } from '../../redux/modules/door';
 import { modeListRequested, modeChangeRequested } from '../../redux/modules/mode';
-import { weatherRequested } from '../../redux/modules/weather';
+import { weatherRequested, weatherHistoryShow, weatherHistoryHide } from '../../redux/modules/weather';
 import {
   HOUSE_MODE_ID,
   LIVING_CAMERA_ID,
@@ -26,6 +26,12 @@ import { thermostatRequested, thermostatModeChangeRequested } from '../../redux/
 export class CardList extends Component {
   constructor() {
     super();
+
+    this.state = {
+      weather: {
+        history: null,
+      }
+    };
 
     this.handleHouseModeRetry = this.handleHouseModeRetry.bind(this);
     this.handleLightStatusRetry = this.handleLightStatusRetry.bind(this);
@@ -51,17 +57,6 @@ export class CardList extends Component {
     this.props.getAllLightStatus();
   }
 
-  formatModeToProps(mode) {
-    return '' + mode.id + '|' + mode.name
-  };
-  getCurrentMode(modeState) {
-    if (!modeState || !modeState.currentMode) {
-      return '|...';
-    }
-  
-    return this.formatModeToProps(modeState.currentMode)
-  }
-
   render() {
     return (
       <div className="container">
@@ -78,13 +73,13 @@ export class CardList extends Component {
             cameraImage={this.props.garageCameraImage}
             door={this.props.garageDoor}
             onHistoryClick={() => { this.props.handleDoorHistoryClick(GARAGE_DOOR_CMD) }}
-            onHistoryBackdropClose={() => { this.props.handleHistoryBackdropClose(GARAGE_DOOR_CMD)}} />
+            onHistoryBackdropClose={() => { this.props.handleDoorHistoryBackdropClose(GARAGE_DOOR_CMD)}} />
           
           <CardDoor
             title="Entrée"
             door={this.props.enrtyDoor}
             onHistoryClick={() => { this.props.handleDoorHistoryClick(ENTRY_DOOR_CMD) }}
-            onHistoryBackdropClose={() => { this.props.handleHistoryBackdropClose(ENTRY_DOOR_CMD)}} />
+            onHistoryBackdropClose={() => { this.props.handleDoorHistoryBackdropClose(ENTRY_DOOR_CMD)}} />
 
           <CardCamera
             title="Séjour"
@@ -104,7 +99,9 @@ export class CardList extends Component {
 
           <CardWeather
             title="Extérieur"
-            weather={this.props.outdoorWeather} />
+            weather={this.props.outdoorWeather}
+            onHistoryClick={this.props.handleWeatherHistoryShow}
+            onHistoryClose={this.props.handleWeatherHistoryClose} />
         </div>
       </div>
     );
@@ -127,7 +124,7 @@ const mapDispatchToProps = {
   getAllLightStatus: allLightStatusRequested,
   getDoorStatusHistory: doorStatusWithHistoryRequested,
   handleDoorHistoryClick: doorHistoryShow,
-  handleHistoryBackdropClose: doorHistoryHide,
+  handleDoorHistoryBackdropClose: doorHistoryHide,
   handleLightOffClick: allLightsOffRequested,
   getCameraImage: cameraImageRequested,
   getMode: modeListRequested,
@@ -135,6 +132,8 @@ const mapDispatchToProps = {
   getThermostat: thermostatRequested,
   handleThermostatModeChange: thermostatModeChangeRequested,
   getWeather: weatherRequested,
+  handleWeatherHistoryShow: weatherHistoryShow,
+  handleWeatherHistoryClose: weatherHistoryHide,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CardList);

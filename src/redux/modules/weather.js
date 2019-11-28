@@ -15,6 +15,8 @@ const GENERIC_TYPE = {
   'windDirection': 'WIND_DIRECTION',
 }
 
+export const WEATHER_HISTORY_DEFAULT_DAYS_NUMBER = 7;
+
 // Actions
 export const WEATHER_REQUESTED = 'WEATHER_REQUESTED';
 export const WEATHER_LOADED = 'WEATHER_LOADED';
@@ -201,6 +203,7 @@ export function weatherHistoryRequested(payload) {
     payload: {
       id: payload.id,
       item: payload.item,
+      days: payload.days ? payload.days : WEATHER_HISTORY_DEFAULT_DAYS_NUMBER,
     }
   }
 }
@@ -301,8 +304,10 @@ export function* weatherHistoryRequestSaga(action) {
     const id = action.payload.id;
     const item = action.payload.item;
 
+    const startTime = DateTime.local().minus({days: action.payload.days}).toFormat('yyyy-LL-dd HH:mm:ss');
+
     const cmd = yield select(getWeatherItemCommandId, { id, item });
-    const history = yield call(getJeedomCommandHistory, cmd);
+    const history = yield call(getJeedomCommandHistory, { cmd, startTime });
 
     const payload = {
       id,
@@ -323,5 +328,6 @@ export function* weatherHistoryShowSaga(action) {
   yield put(weatherHistoryRequested({
     id: action.payload.id,
     item: action.payload.item,
+    days: action.payload.days,
   }));
 }

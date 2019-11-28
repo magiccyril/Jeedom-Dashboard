@@ -1,5 +1,6 @@
 import React from 'react';
 import Card from '../Card/Card';
+import BackdropWeatherHistory from '../BackdropWeatherHistory/BackdropWeatherHistory';
 import './CardWeather.scss';
 
 const WEATHER_ITEMS_NAME = {
@@ -21,6 +22,25 @@ const formatWeatherItem = (name, item) => {
   return <li key={item.id}>{name} : {item.value}{item.unit}</li>
 }
 
+function generateHistoryClickHandler(payload) {
+  return (e) => {
+    e.preventDefault();
+    payload.handler({
+      id: payload.id,
+      item: payload.item,
+    })
+  }
+}
+
+function generateHistoryCloseHandler(payload) {
+  return () => {
+    payload.handler({
+      id: payload.id,
+      item: payload.item,
+    })
+  }
+}
+
 function CardWeather(props) {
   if (!props.weather || props.weather.loading) {
     return (
@@ -38,7 +58,25 @@ function CardWeather(props) {
     temperature = (
       <div className="col-5 order-12 text-center weather-item-temperature">
         <h2>{weatherItems.temperature.value}{weatherItems.temperature.unit}</h2>
-        <button className="btn btn-light btn-sm">Historique</button>
+        <button
+          className="btn btn-light btn-sm"
+          onClick={generateHistoryClickHandler({
+            id: props.weather.id,
+            item: 'temperature',
+            handler: props.onHistoryClick
+          })}>
+          Historique
+        </button>
+
+        <BackdropWeatherHistory
+          title="Température"
+          show={weatherItems.temperature.history.show}
+          onClose={generateHistoryCloseHandler({
+            id: props.weather.id,
+            item: 'temperature',
+            handler: props.onHistoryClose
+          })}
+          history={weatherItems.temperature.history} />
       </div>
     )
   }

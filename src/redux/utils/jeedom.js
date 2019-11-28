@@ -107,7 +107,7 @@ export function getJeedomCommand(id) {
     .then(response => response.result)  
 }
 
-export function getJeedomCommandHistory(id) {
+export function getJeedomCommandHistory(payload) {
   return getStorageSettings()
     .then((settings) => {
       const requestOptions = {
@@ -118,7 +118,8 @@ export function getJeedomCommandHistory(id) {
           'method': 'cmd::getHistory',
           'params': {
             'apikey': settings.apikey,
-            'id': id,
+            'id': payload.cmd,
+            'startTime': payload.startTime,
           }
         })};
       const url = settings.url + JEE_API;

@@ -31,6 +31,7 @@ import {
 import { put, call, select } from 'redux-saga/effects'
 import { getJeedomEquipment, getJeedomCommandHistory } from '../utils/jeedom';
 import { cloneDeep } from 'lodash';
+import { DateTime } from 'luxon';
 
 describe('Weather', () => {
   describe('Actions', () => {
@@ -80,6 +81,24 @@ describe('Weather', () => {
     it('should create an action to request a weather item history', () => {
       const id = randomNumber(99);
       const item = 'humidity';
+      const days = 28;
+
+      const payload = {
+        id,
+        item,
+        days,
+      }
+      
+      const expectedAction = {
+        type: WEATHER_HISTORY_REQUESTED,
+        payload
+      };
+      expect(weatherHistoryRequested({...payload, uselessParam: false})).toEqual(expectedAction)
+    });
+
+    it('should create an action to request a weather item history with default days number', () => {
+      const id = randomNumber(99);
+      const item = 'humidity';
 
       const payload = {
         id,
@@ -88,7 +107,10 @@ describe('Weather', () => {
       
       const expectedAction = {
         type: WEATHER_HISTORY_REQUESTED,
-        payload
+        payload: {
+          ...payload,
+          days: WEATHER_HISTORY_DEFAULT_DAYS_NUMBER,
+        }
       };
       expect(weatherHistoryRequested({...payload, uselessParam: false})).toEqual(expectedAction)
     });
@@ -477,16 +499,18 @@ describe('Weather', () => {
       const history = generateWeatherHistory();
       weather.weather[item].history.data = history;
       const cmd = weather.weather[item].id;
+      const days = randomNumber(99);
+      const startTime = DateTime.local().minus({days}).toFormat('yyyy-LL-dd HH:mm:ss');
 
       const historyApiResult = generateWeatherHistoryApiResult(cmd, history);
 
-      const generator = weatherHistoryRequestSaga(weatherHistoryRequested({ id, item }));
+      const generator = weatherHistoryRequestSaga(weatherHistoryRequested({ id, item, days }));
       
       let next = generator.next();
       expect(next.value).toEqual(select(getWeatherItemCommandId, {id, item}));
 
       next = generator.next(cmd);
-      expect(next.value).toEqual(call(getJeedomCommandHistory, cmd));
+      expect(next.value).toEqual(call(getJeedomCommandHistory, {cmd, startTime}));
 
       next = generator.next(historyApiResult);
       expect(next.value).toEqual(put(weatherHistoryLoaded({ id, item, history: historyApiResult })));
@@ -504,14 +528,16 @@ describe('Weather', () => {
       const history = generateWeatherHistory();
       weather.weather[item].history.data = history;
       const cmd = weather.weather[item].id;
+      const days = randomNumber(99);
+      const startTime = DateTime.local().minus({days}).toFormat('yyyy-LL-dd HH:mm:ss');
 
-      const generator = weatherHistoryRequestSaga(weatherHistoryRequested({ id, item }));
+      const generator = weatherHistoryRequestSaga(weatherHistoryRequested({ id, item, days }));
       
       let next = generator.next();
       expect(next.value).toEqual(select(getWeatherItemCommandId, {id, item}));
 
       next = generator.next(cmd);
-      expect(next.value).toEqual(call(getJeedomCommandHistory, cmd));
+      expect(next.value).toEqual(call(getJeedomCommandHistory, {cmd, startTime}));
 
       next = generator.throw(error);
       expect(next.value).toEqual(put(weatherHistoryErrored({ id, item, error })));

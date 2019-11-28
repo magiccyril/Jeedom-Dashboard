@@ -2,6 +2,8 @@ import { takeEvery, call, put, putResolve } from 'redux-saga/effects';
 import { getJeedomCommand, getJeedomCommandHistory } from '../utils/jeedom';
 import { DateTime } from 'luxon';
 
+export const DOOR_HISTORY_DEFAULT_DAYS_NUMBER = 7;
+
 // Actions
 export const DOOR_STATUS_WITH_HISTORY_REQUESTED = 'DOOR_STATUS_WITH_HISTORY_REQUESTED';
 export const DOOR_STATUS_REQUESTED = 'DOOR_STATUS_REQUESTED';
@@ -122,7 +124,13 @@ export default function reducer(state = initialState, action = {}) {
 
 // Action Creators
 export function doorStatusWithHistoryRequested(payload) {
-  return { type: DOOR_STATUS_WITH_HISTORY_REQUESTED, payload: payload }
+  return {
+    type: DOOR_STATUS_WITH_HISTORY_REQUESTED,
+    payload: {
+      id: payload.id,
+      days: payload.days ? payload.days : DOOR_HISTORY_DEFAULT_DAYS_NUMBER,
+    }
+  }
 }
 export function doorStatusRequested(payload) {
   return { type: DOOR_STATUS_REQUESTED, payload: payload }
@@ -134,7 +142,13 @@ export function doorStatusErrored(payload) {
   return { type: DOOR_STATUS_ERRORED, payload: payload }
 }
 export function doorHistoryRequested(payload) {
-  return { type: DOOR_HISTORY_REQUESTED, payload: payload }
+  return {
+    type: DOOR_HISTORY_REQUESTED,
+    payload: {
+      id: payload.id,
+      days: payload.days ? payload.days : DOOR_HISTORY_DEFAULT_DAYS_NUMBER,
+    }
+  }
 }
 export function doorHistoryLoaded(payload) {
   return { type: DOOR_HISTORY_LOADED, payload: payload }
@@ -175,7 +189,10 @@ function* doorStatusRequestSaga(action) {
 
 function* doorHistoryRequestSaga(action) {
   try {
-    const history = yield call(getJeedomCommandHistory, action.payload.id);
+    const cmd = action.payload.id;
+    const startTime = DateTime.local().minus({days: action.payload.days}).toFormat('yyyy-LL-dd HH:mm:ss');
+
+    const history = yield call(getJeedomCommandHistory, { cmd, startTime });
     const historyPayload = {
       id: action.payload.id,
       history: history,
