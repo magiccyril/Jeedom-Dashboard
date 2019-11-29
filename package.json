@@ -17,7 +17,7 @@
   },
   "scripts": {
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -m 'auto commit [ci skip]' -d build",
     "start": "PORT=8888 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
