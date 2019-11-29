@@ -306,7 +306,7 @@ const generateWeatherApiCmd = (item) => ({
     name: item.name ? item.name : 'Item ' + item.id,
     order: item.order,
     eqLogic_id: item.weatherId,
-    isHistorized: item.isHistorized ? item.isHistorized.toString() : '0',
+    isHistorized: item.isHistorized ? '1' : '0',
     unite: item.unit ? item.unit : '',
     value: item.value ? item.value : '#'+ randomNumber(9999) +'#',
     isVisible: item.isVisible,
