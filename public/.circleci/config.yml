@@ -1,0 +1,19 @@
+version: 2 # use CircleCI 2.0
+jobs:
+  nothing:
+    docker:
+      - image: circleci/node:10
+    steps:
+      - run:
+            name: Deploy
+            command: |
+              echo "nothing to do !"
+
+workflows:
+  version: 2
+  do nohting:
+    jobs:
+      - nothing:
+          filters:
+            branches:
+              only: master
