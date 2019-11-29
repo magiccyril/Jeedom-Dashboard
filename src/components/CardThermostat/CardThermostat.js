@@ -115,25 +115,25 @@ export class CardThermostat extends Component {
         <div>
           <hr />
           <div className="form-group text-center thermostat-form-group">
-          <label htmlFor={'thermostat-'+ thermostatId}>Thermostat</label>
-          <datalist id={'thermostat-marks-'+ thermostatId} className="row text-center">
-            {datalistOptions}
-          </datalist>
-          <input
-            type="range"
-            className="custom-range"
-            id={'thermostat-'+ thermostatId}
-            min="0"
-            max={modes.length - 1}
-            step="1"
-            defaultValue={modeIndex}
-            list={'thermostat-marks-'+ thermostatId}
-            onChange={this.handleOnChange} />
-        
-            <div className="form-text">
-              {this.state.showPower ? power : ''}
-              {this.state.showButtons ? changeButtons : ''}
-            </div>
+            <label htmlFor={'thermostat-'+ thermostatId}>Thermostat</label>
+            <datalist id={'thermostat-marks-'+ thermostatId} className="row text-center">
+              {datalistOptions}
+            </datalist>
+            <input
+              type="range"
+              className="custom-range"
+              id={'thermostat-'+ thermostatId}
+              min="0"
+              max={modes.length - 1}
+              step="1"
+              defaultValue={modeIndex}
+              list={'thermostat-marks-'+ thermostatId}
+              onChange={this.handleOnChange} />
+          
+              <div className="form-text">
+                {this.state.showPower ? power : ''}
+                {this.state.showButtons ? changeButtons : ''}
+              </div>
           </div>
         </div>
       </CardWeather>
