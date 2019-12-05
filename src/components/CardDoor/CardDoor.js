@@ -13,13 +13,13 @@ function CardDoor(props) {
       overlay={overlay}>
       <p className="card-text">{status}</p>
       <div className="text-right">
-        {props.onHistoryClick ? <button className="btn btn-link" onClick={props.onHistoryClick}>Historique</button> : ''}
+        {props.onHistoryClick ? <button className="btn btn-link" onClick={() => props.onHistoryClick(props.door.id)}>Historique</button> : ''}
       </div>
 
       <BackdropDoorHistory
         title="Historique"
         show={props.door && props.door.showHistory}
-        onClose={props.onHistoryBackdropClose}
+        onClose={() => props.onHistoryBackdropClose(props.door.id)}
         history={props.door && props.door.history ? props.door.history : null} />
     </Card>
   );

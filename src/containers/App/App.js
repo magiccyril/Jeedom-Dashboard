@@ -1,16 +1,28 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+
 import { showSettings, hideSettings, settingsFormSucceeded } from "../../redux/modules/settings";
 import { appLaunchRequested, appLaunchSucceeded } from "../../redux/modules/launchScreen";
 import { setSummaryIntervalRegistration } from "../../redux/modules/summary";
-import { roomsRequested } from "../../redux/modules/room";
 
 import LaunchScreen from '../../components/LaunchScreen/LaunchScreen';
 import Header from '../../components/Header/Header';
-import CardList from '../CardList/CardList';
+import CardContainer from '../CardContainer/CardContainer';
 import RoomList from '../../components/RoomList/RoomList';
 import BackdropSettings from '../../components/BackdropSettings/BackdropSettings';
 import Snackbar from '../../components/Snackbar/Snackbar';
+
+import {
+  CARD_HOUSE_LIGHT_ALL,
+  CARD_HOUSE_MODE,
+  CARD_LIVING_THERMOSTAT,
+  CARD_LIVING_LIGHT_MODE,
+  CARD_LIVING_CAMERA,
+  CARD_KITCHEN_LIGHT_MODE,
+  CARD_ENTRY_DOOR,
+  CARD_ENTRY_LIGHT_MODE,
+  CARD_GARAGE_CAMERADOOR,
+  CARD_EXTERIOR_WEATHER, } from '../../constants/cards';
 
 import './App.scss';
 
@@ -34,7 +46,6 @@ export class App extends Component {
     window.addEventListener('scroll', this.handleScroll);
     this.props.appLaunchRequested();
     this.props.setSummaryIntervalRegistration();
-    this.props.getRooms();
   }
 
   componentWillUnmount() {
@@ -51,6 +62,16 @@ export class App extends Component {
         </div>)
     }
 
+    const cards = [
+      CARD_HOUSE_LIGHT_ALL,
+      CARD_GARAGE_CAMERADOOR,
+      CARD_ENTRY_DOOR,
+      CARD_LIVING_CAMERA,
+      CARD_HOUSE_MODE,
+      CARD_LIVING_THERMOSTAT,
+      CARD_EXTERIOR_WEATHER,
+    ];
+
     return (
       <div className="App" id="App">
         <Header 
@@ -58,12 +79,13 @@ export class App extends Component {
           onShowSettings={this.props.handleShowSettings}
           summary={this.props.summary} />
 
-        <CardList />
+        <div className="container">
+          <div className="card-columns">
+            <CardContainer cards={cards} />
+          </div>
+        </div>
 
-        <RoomList
-          rooms={this.props.rooms.list}
-          loading={this.props.rooms.loading}
-          error={this.props.rooms.error} />
+        <RoomList />
         
         <BackdropSettings
           show={this.props.showSettingsBackdrop}
@@ -80,7 +102,6 @@ const mapStateToProps = (state) => ({
   launchScreen: state.launchScreen,
   showSettingsBackdrop: state.settings.show,
   summary: state.summary,
-  rooms: state.room,
   snackbar: state.snackbar,
 });
 
@@ -91,7 +112,6 @@ const mapDispatchToProps = {
   handleLaunchScreenSetupSuccess: appLaunchSucceeded,
   handleSettingsBackdropFormSuccess: settingsFormSucceeded,
   setSummaryIntervalRegistration: setSummaryIntervalRegistration,
-  getRooms: roomsRequested,
 };
 
 

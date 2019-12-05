@@ -2,7 +2,7 @@ import React from 'react';
 import Card from '../Card/Card';
 
 function CardLights(props) {
-  const lightsOn = props.lights.filter((light) => (light.value === 1));
+  const lightsOn = props.lights.lights.filter((light) => (light.value === 1));
   
   let text = 'Le statut des lumières est indéterminé !';
 
@@ -18,13 +18,10 @@ function CardLights(props) {
 
   const overlay = props.loading ? 'Chargement...' : '';
 
-  if (props.error) {
+  if (props.lights.error) {
     return (
       <Card title={props.title} error overlay={overlay}>
         <p className="card-text">Oups une erreur est survenue dans la récupération de l'état des lumières !</p>
-        <div className="text-right">
-          <button className="btn btn-primary" onClick={props.onRetry}>Ré-essayer</button>
-        </div>
       </Card>
     )
   }
