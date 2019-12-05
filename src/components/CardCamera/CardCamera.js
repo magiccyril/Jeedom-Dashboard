@@ -9,10 +9,15 @@ export class CardCamera extends Component {
     this.state = {
       time: Date.now()
     };
+    this.interval = undefined;
   }
 
   componentDidMount() {
-    setInterval(() => this.setState({ time: Date.now() }), REFRESH_DELAY);
+    this.interval = setInterval(() => this.setState({ time: Date.now() }), REFRESH_DELAY);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
   }
 
   render() {
