@@ -3,6 +3,8 @@ import { getJeedomEquipment } from '../utils/jeedom';
 
 import { SUMMARY_ID } from '../../constants/equipments';
 
+const REFRESH_DELAY = 60 * 1000;
+
 // Actions
 export const SUMMARY_INTERVAL_REGISTRATION = 'SUMMARY_INTERVAL_REGISTRATION';
 export const SUMMARY_REQUESTED = 'SUMMARY_REQUESTED';
@@ -31,6 +33,7 @@ export default function reducer(state = initialState, action = {}) {
       const light = cmds.find(el => (el.name === 'light'));
       const presenceCyril = cmds.find(el => (el.name === 'presence-cyril'));
       const presenceHelena = cmds.find(el => (el.name === 'presence-helena'));
+      const mail = cmds.find(el => (el.name === 'mail'));
 
       return {
         homeTemperature: homeTemperature ? parseFloat(homeTemperature.currentValue).toFixed(1) : '-',
@@ -40,7 +43,8 @@ export default function reducer(state = initialState, action = {}) {
         presence: {
           cyril: presenceCyril.currentValue === 1 ? true : false,
           helena: presenceHelena.currentValue === 1 ? true : false,
-        }
+        },
+        mail: mail.currentValue === 1 ? true : false,
       };
 
     default: return state;
@@ -70,7 +74,7 @@ export function* saga() {
 function* summaryIntervalRegistrationSaga() {
   while(true) {
     yield put(summaryRequested())
-    yield delay(60 * 1000);
+    yield delay(REFRESH_DELAY);
   }
 }
 
