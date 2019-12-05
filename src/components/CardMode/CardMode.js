@@ -42,9 +42,6 @@ function CardMode(props) {
     return (
       <Card title={props.title} error overlay={overlay}>
         <p className="card-text">Oups une erreur est survenue dans la récupération des modes !</p>
-        <div className="text-right">
-          <button className="btn btn-primary" onClick={props.onRetry}>Ré-essayer</button>
-        </div>
       </Card>
     )
   }
