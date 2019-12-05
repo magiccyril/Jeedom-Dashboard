@@ -40,7 +40,10 @@ export class CardContainer extends Component {
         break;
       
       case CARD_TYPES.lights:
-        this.props.getAllLightStatus();
+        this.props.getAllLightStatus({
+          id: card.settings.equipment_id,
+          off_cmd_id: card.settings.command_id,
+        });
         break;
       
       case CARD_TYPES.mode:
@@ -88,6 +91,7 @@ export class CardContainer extends Component {
       
       case CARD_TYPES.lights:
         return <CardLight
+          title={card.title}
           lights={this.props.lights}
           onOffClick={this.props.handleAllLightOffClick}
           key={index} />

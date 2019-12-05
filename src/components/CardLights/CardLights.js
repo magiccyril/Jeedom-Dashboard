@@ -27,10 +27,10 @@ function CardLights(props) {
   }
 
   return (
-    <Card title="Lumières" overlay={overlay}>
+    <Card title={props.title} overlay={overlay}>
       <p className="card-text">{text}</p>
       <div className="text-right">
-        <button className="btn btn-primary" onClick={props.onOffClick}>Tout éteindre</button>
+        <button className="btn btn-primary" onClick={() => props.onOffClick({id: props.lights.id, off_cmd_id: props.lights.off_cmd_id})}>Tout éteindre</button>
       </div>
     </Card>
   );
