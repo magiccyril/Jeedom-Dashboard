@@ -1,8 +1,7 @@
 import { takeEvery, takeLatest, call, put, delay } from 'redux-saga/effects';
 import { getJeedomEquipment } from '../utils/jeedom';
 
-import { SUMMARY_ID } from '../../constants/equipments';
-
+const SUMMARY_EQUIPMENT_ID = 185;
 const REFRESH_DELAY = 60 * 1000;
 
 // Actions
@@ -80,7 +79,7 @@ function* summaryIntervalRegistrationSaga() {
 
 function* summaryRequestSaga() {
   try {
-    const payload = yield call(getJeedomEquipment, SUMMARY_ID);
+    const payload = yield call(getJeedomEquipment, SUMMARY_EQUIPMENT_ID);
     yield put(summaryLoaded(payload));
   } catch (e) {
     yield put(summaryErrored(e));

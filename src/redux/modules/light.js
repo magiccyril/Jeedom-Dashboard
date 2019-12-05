@@ -1,10 +1,10 @@
 import { takeEvery, call, put, delay } from 'redux-saga/effects';
 import { getJeedomEquipment, execJeedomCmd } from '../utils/jeedom';
 
-import { ALL_LIGHT_OFF_CMD } from '../../constants/commands';
-import { ALL_LIGHT_STATUS_ID } from '../../constants/equipments';
 import { showErrorSnackbar } from './snackbar';
 import { summaryRequested } from './summary';
+
+export const REFRESH_DELAY = 3 * 1000;
 
 // Actions
 export const LIGHT_ALL_STATUS_REQUESTED = 'LIGHT_ALL_STATUS_REQUESTED';
@@ -16,6 +16,8 @@ export const LIGHT_ALL_OFF_REQUESTED = 'LIGHT_ALL_OFF_REQUESTED';
 const initialState = {
   loading: false,
   error: false,
+  id: undefined,
+  off_cmd_id: undefined,
   lights: [],
 };
 
@@ -25,18 +27,22 @@ export default function reducer(state = initialState, action = {}) {
       return {
         loading: true,
         error: false,
+        id: action.payload.id,
+        off_cmd_id: action.payload.off_cmd_id,
         lights: [],
       };
 
     case LIGHT_ALL_STATUS_ERRORED:
       return {
+        ...state,
         loading: false,
         error: true,
         lights: [],
       };
     
     case LIGHT_ALL_STATUS_LOADED:
-      const cmds = action.payload.cmds;
+      const equipment = action.payload.equipment;
+      const cmds = equipment.cmds;
 
       let lights = [];
       cmds.forEach(cmd => {
@@ -62,6 +68,8 @@ export default function reducer(state = initialState, action = {}) {
       });
 
       return {
+        ...state,
+        id: equipment.id,
         loading: false,
         error: false,
         lights: lights,
@@ -72,18 +80,18 @@ export default function reducer(state = initialState, action = {}) {
 }
 
 // Action Creators
-export function allLightStatusRequested() {
-  return { type: LIGHT_ALL_STATUS_REQUESTED }
+export function allLightStatusRequested({id, off_cmd_id}) {
+  return { type: LIGHT_ALL_STATUS_REQUESTED, payload: { id, off_cmd_id }}
 }
-export function allLightStatusLoaded(payload) {
-  return { type: LIGHT_ALL_STATUS_LOADED, payload: payload }
+export function allLightStatusErrored({ id, error }) {
+  return { type: LIGHT_ALL_STATUS_ERRORED, payload: { id, error }};
 }
-export function allLightStatusErrored(e) {
-  return { type: LIGHT_ALL_STATUS_ERRORED, payload: e };
+export function allLightStatusLoaded({ id, equipment }) {
+  return { type: LIGHT_ALL_STATUS_LOADED, payload: { id, equipment } }
 }
 
-export function allLightsOffRequested() {
-  return { type: LIGHT_ALL_OFF_REQUESTED }
+export function allLightsOffRequested({ id, off_cmd_id }) {
+  return { type: LIGHT_ALL_OFF_REQUESTED, payload: { id, off_cmd_id } }
 }
 
 // Side effects
@@ -92,20 +100,24 @@ export function* saga() {
   yield takeEvery(LIGHT_ALL_OFF_REQUESTED, lightAllOffRequestSaga);
 }
 
-function* lightStatusRequestSaga(action) {
+export function* lightStatusRequestSaga(action) {
   try {
-    const payload = yield call(getJeedomEquipment, ALL_LIGHT_STATUS_ID);
-    yield put(allLightStatusLoaded(payload));
-  } catch (e) {
-    yield put(allLightStatusErrored(e));
+    const id = action.payload.id;
+    const equipment = yield call(getJeedomEquipment, id);
+    yield put(allLightStatusLoaded({ id, equipment }));
+  } catch (error) {
+    yield put(allLightStatusErrored({ id: action.payload.id, error }));
   }
 }
 
-function* lightAllOffRequestSaga() {
+export function* lightAllOffRequestSaga(action) {
   try {
-    yield call(execJeedomCmd, ALL_LIGHT_OFF_CMD);
-    yield delay(3 * 1000);
-    yield put(allLightStatusRequested());
+    yield call(execJeedomCmd, action.payload.off_cmd_id);
+    yield delay(REFRESH_DELAY);
+    yield put(allLightStatusRequested({
+      id: action.payload.id,
+      off_cmd_id: action.payload.off_cmd_id,
+    }));
     yield put(summaryRequested());
   } catch (e) {
     yield put(showErrorSnackbar("Erreur lors de l'extinction des lumières !"));

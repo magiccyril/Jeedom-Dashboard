@@ -11,7 +11,7 @@ import {
   CARD_OFFICE_WEATHER,
   CARD_BATHROOM_WEATHER,
   CARD_GARAGE_CAMERADOOR,
-  CARD_EXTERIOR_WEATHER, } from './cards';
+} from './cards';
 
 const LIVING = {
   name: 'Séjour',
