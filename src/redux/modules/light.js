@@ -2,9 +2,9 @@ import { takeEvery, call, put, delay } from 'redux-saga/effects';
 import { getJeedomEquipment, execJeedomCmd } from '../utils/jeedom';
 
 import { showErrorSnackbar } from './snackbar';
-import { summaryRequested } from './summary';
 
 export const REFRESH_DELAY = 3 * 1000;
+export const LIGHT_ALL_OFF_ERROR_SNACKBAR = "Erreur lors de l'extinction des lumières !";
 
 // Actions
 export const LIGHT_ALL_STATUS_REQUESTED = 'LIGHT_ALL_STATUS_REQUESTED';
@@ -118,8 +118,7 @@ export function* lightAllOffRequestSaga(action) {
       id: action.payload.id,
       off_cmd_id: action.payload.off_cmd_id,
     }));
-    yield put(summaryRequested());
   } catch (e) {
-    yield put(showErrorSnackbar("Erreur lors de l'extinction des lumières !"));
+    yield put(showErrorSnackbar(LIGHT_ALL_OFF_ERROR_SNACKBAR));
   }
 }

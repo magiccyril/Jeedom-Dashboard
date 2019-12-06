@@ -387,3 +387,81 @@ export const generateWeatherHistoryApiResult = (cmdId, historyState) => (history
   datetime: item.datetime.toFormat('yyyy-LL-dd HH:mm:ss'),
   cmd_id: cmdId,
 })))
+
+
+// Lights
+const generateLight = (i) => ({
+  id: randomNumber(9999),
+  name: 'A random light ' + i,
+  order: i,
+  value: randomNumber(1).toString(),
+  label: 'Random label ' + i,
+  singularComplement: 'du'
+})
+export const generateLights = () => {
+  let lights = [];
+  for (let i = 0; i < randomNumber(10); i++) {
+    lights.push(generateLight(i));
+  }
+  return lights;
+}
+export const generateLightsApiResult = (id, lights) => {
+  let cmds = [];
+  lights.forEach(light => {
+    cmds.push({
+      id: light.id,
+      logicalId: '',
+      generic_type: 'LIGHT_STATE',
+      name: light.name,
+      order: light.order,
+      type: 'info',
+      display: {
+        parameters: {
+          label: light.label,
+          singularComplement: light.singularComplement,
+        }
+      },
+      value: '#'+ randomNumber(9999) +'#',
+      isVisible: '1',
+      currentValue: light.value,
+    });
+  });
+
+  cmds.push({
+    id: randomNumber(9999),
+    logicalId: '',
+    generic_type: 'LIGHT_STATE',
+    name: 'Light invisible',
+    order: '11',
+    type: 'info',
+    display: {
+      parameters: {
+        label: 'Label of invisible light',
+        singularComplement: 'of',
+      }
+    },
+    value: '#'+ randomNumber(9999) +'#',
+    isVisible: randomNumber(1).toString(),
+    currentValue: randomNumber(1).toString(),
+  })
+
+  cmds.push({
+    id: randomNumber(9999),
+    logicalId: 'refresh',
+    generic_type: '',
+    name: 'Rafraichir',
+    order: '12',
+    type: 'action',
+    value: '',
+    isVisible: '0',
+    currentValue: null,
+  })
+  
+  return {
+    id,
+    name: 'Fake lights',
+    generic_type: null,
+    isEnable: '1',
+    cmds,
+  }
+}
