@@ -133,7 +133,7 @@ export const CARD_GARAGE_CAMERADOOR = {
 // Exterior
 export const CARD_EXTERIOR_WEATHER = {
   type: CARD_TYPES.weather,
-  title: 'Environnement',
+  title: 'Extérieur',
   settings: {
     equipment_id: 95,
   }
