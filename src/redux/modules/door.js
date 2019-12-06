@@ -236,7 +236,6 @@ function* doorHistoryRequestSaga(action) {
 
 export function* doorTriggerRequestSaga(action) {
   try {
-    console.log(action);
     yield call(execJeedomCmd, action.payload.cmd);
     yield delay(REFRESH_DELAY);
     yield put(doorTriggerSucceeded({
@@ -251,6 +250,6 @@ export function* doorTriggerRequestSaga(action) {
     }));
     yield put(showErrorSnackbar(SNACKBAR_ERROR));
   } finally {
-    yield put(doorStatusRequested({id: action.payload.id}));
+    yield put(doorStatusWithHistoryRequested({id: action.payload.id}));
   }
 }
