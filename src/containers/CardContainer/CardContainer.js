@@ -9,7 +9,7 @@ import CardMode from '../../components/CardMode/CardMode';
 import CardThermostat from '../../components/CardThermostat/CardThermostat';
 import CardWeather from '../../components/CardWeather/CardWeather';
 import { cameraImageRequested } from '../../redux/modules/camera';
-import { doorStatusWithHistoryRequested, doorHistoryShow, doorHistoryHide } from '../../redux/modules/door';
+import { doorStatusWithHistoryRequested, doorTriggerRequested, doorHistoryShow, doorHistoryHide } from '../../redux/modules/door';
 import { allLightStatusRequested, allLightsOffRequested } from '../../redux/modules/light';
 import { modeListRequested, modeChangeRequested } from '../../redux/modules/mode';
 import { thermostatRequested, thermostatModeChangeRequested } from '../../redux/modules/thermostat';
@@ -98,6 +98,8 @@ export class CardContainer extends Component {
           title={card.title}
           cameraImage={this.props.camera[card.settings.equipment_id]}
           door={this.props.door[card.settings.door_status_command]}
+          triggerCmd={card.settings.door_trigger_command}
+          onDoorTriggerClick={this.props.handleDoorTriggerClick}
           onHistoryClick={this.props.handleDoorHistoryClick}
           onHistoryBackdropClose={this.props.handleDoorHistoryBackdropClose}
           key={index} />;
@@ -193,6 +195,7 @@ const mapDispatchToProps = {
   // Camera
   getCameraImage: cameraImageRequested,
   // Door
+  handleDoorTriggerClick: doorTriggerRequested,
   getDoorStatusHistory: doorStatusWithHistoryRequested,
   handleDoorHistoryClick: doorHistoryShow,
   handleDoorHistoryBackdropClose: doorHistoryHide,
