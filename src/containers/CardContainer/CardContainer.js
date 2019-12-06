@@ -18,10 +18,25 @@ import { weatherRequested, weatherHistoryShow, weatherHistoryHide } from '../../
 import { CARD_TYPES } from '../../constants/cards';
 
 export class CardContainer extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      open: false
+    };
+
+    this.handleShowMoreCards = this.handleShowMoreCards.bind(this);
+  }
+
   componentDidMount() {
     this.props.cards.forEach((card) => {
       this.prepareCard(card);
     })
+  }
+
+  handleShowMoreCards(e) {
+    e.preventDefault();
+    this.setState({open: true});
   }
 
   prepareCard(card) {
@@ -129,12 +144,32 @@ export class CardContainer extends Component {
 
   render() {
     let cards = [];
-
     this.props.cards.forEach((card, i) => {
       cards.push(this.createCard(card, i));
-    })
+    });
 
-    return <div>{cards}</div>;
+    let button = '';
+    let mainCards = [ ...cards ];
+    let otherCards = [];
+
+    if (this.props.collapse) {
+      mainCards = cards.slice(0, this.props.collapse);
+
+      if (this.state.open) {
+        otherCards = cards.slice(this.props.collapse);
+      }
+      else {
+        button = <p className="text-center">
+          <button type="button" className="btn btn-light" onClick={this.handleShowMoreCards}>Voir plus</button>
+        </p>;
+      }
+    }
+
+    return <div>
+      {mainCards}
+      {button}
+      {otherCards}
+    </div>;
   }
 }
 
