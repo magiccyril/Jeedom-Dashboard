@@ -84,57 +84,57 @@ export default function reducer(state = initialState, action = {}) {
         }
       };
 
-      case DOOR_HISTORY_REQUESTED:
-        return {
-          ...state,
-          [action.payload.id]: {
-            ...state[action.payload.id],
-            loading: true,
-            error: false,
-          }
-        };
-      
-      case DOOR_HISTORY_ERRORED:
-          return {
-            ...state,
-            [action.payload.id]: {
-              ...state[action.payload.id],
-              loading: false,
-              error: true,
-            }
-          };
-
-      case DOOR_HISTORY_LOADED:
-        const history = action.payload.history.map(event => ({
-          datetime: DateTime.fromFormat(event.datetime, 'yyyy-MM-dd TT'),
-          open: event.value === '0' ? false : true,
-        })).sort((a, b) => b.datetime.diff(a.datetime));
-
-        return {
-          ...state,
-          [action.payload.id]: {
-            ...state[action.payload.id],
-            history: history,
-          }
+    case DOOR_HISTORY_REQUESTED:
+      return {
+        ...state,
+        [action.payload.id]: {
+          ...state[action.payload.id],
+          loading: true,
+          error: false,
         }
-      
-      case DOOR_HISTORY_SHOW:
+      };
+    
+    case DOOR_HISTORY_ERRORED:
         return {
           ...state,
           [action.payload.id]: {
             ...state[action.payload.id],
-            showHistory: true,
+            loading: false,
+            error: true,
           }
         };
 
-      case DOOR_HISTORY_HIDE:
-        return {
-          ...state,
-          [action.payload.id]: {
-            ...state[action.payload.id],
-            showHistory: false,
-          }
-        };
+    case DOOR_HISTORY_LOADED:
+      const history = action.payload.history.map(event => ({
+        datetime: DateTime.fromFormat(event.datetime, 'yyyy-MM-dd TT'),
+        open: event.value === '0' ? false : true,
+      })).sort((a, b) => b.datetime.diff(a.datetime));
+
+      return {
+        ...state,
+        [action.payload.id]: {
+          ...state[action.payload.id],
+          history: history,
+        }
+      }
+    
+    case DOOR_HISTORY_SHOW:
+      return {
+        ...state,
+        [action.payload.id]: {
+          ...state[action.payload.id],
+          showHistory: true,
+        }
+      };
+
+    case DOOR_HISTORY_HIDE:
+      return {
+        ...state,
+        [action.payload.id]: {
+          ...state[action.payload.id],
+          showHistory: false,
+        }
+      };
 
     default: return state;
   }
