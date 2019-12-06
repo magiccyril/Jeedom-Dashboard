@@ -7,22 +7,10 @@ import { setSummaryIntervalRegistration } from "../../redux/modules/summary";
 
 import LaunchScreen from '../../components/LaunchScreen/LaunchScreen';
 import Header from '../../components/Header/Header';
-import CardContainer from '../CardContainer/CardContainer';
+import Home from '../../components/Home/Home';
 import RoomList from '../../components/RoomList/RoomList';
 import BackdropSettings from '../../components/BackdropSettings/BackdropSettings';
 import Snackbar from '../../components/Snackbar/Snackbar';
-
-import {
-  CARD_HOUSE_LIGHT_ALL,
-  CARD_HOUSE_MODE,
-  CARD_LIVING_THERMOSTAT,
-  //CARD_LIVING_LIGHT_MODE,
-  CARD_LIVING_CAMERA,
-  //CARD_KITCHEN_LIGHT_MODE,
-  CARD_ENTRY_DOOR,
-  //CARD_ENTRY_LIGHT_MODE,
-  CARD_GARAGE_CAMERADOOR,
-  CARD_EXTERIOR_WEATHER, } from '../../constants/cards';
 
 import './App.scss';
 
@@ -30,7 +18,7 @@ export class App extends Component {
   constructor() {
     super();
 
-    this.state ={
+    this.state = {
       collapsedHeader: false,
     };
     this.handleScroll = this.handleScroll.bind(this);
@@ -62,16 +50,6 @@ export class App extends Component {
         </div>)
     }
 
-    const cards = [
-      CARD_HOUSE_LIGHT_ALL,
-      CARD_GARAGE_CAMERADOOR,
-      CARD_ENTRY_DOOR,
-      CARD_LIVING_CAMERA,
-      CARD_HOUSE_MODE,
-      CARD_LIVING_THERMOSTAT,
-      CARD_EXTERIOR_WEATHER,
-    ];
-
     return (
       <div className="App" id="App">
         <Header 
@@ -79,11 +57,7 @@ export class App extends Component {
           onShowSettings={this.props.handleShowSettings}
           summary={this.props.summary} />
 
-        <div className="container">
-          <div className="card-columns">
-            <CardContainer cards={cards} />
-          </div>
-        </div>
+        <Home summary={this.props.summary} />
 
         <RoomList />
         
@@ -113,6 +87,5 @@ const mapDispatchToProps = {
   handleSettingsBackdropFormSuccess: settingsFormSucceeded,
   setSummaryIntervalRegistration: setSummaryIntervalRegistration,
 };
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
