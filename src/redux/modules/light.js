@@ -2,6 +2,10 @@ import { takeEvery, call, put, delay } from 'redux-saga/effects';
 import { getJeedomEquipment, execJeedomCmd } from '../utils/jeedom';
 
 import { showErrorSnackbar } from './snackbar';
+import { MODE_CHANGE_SUCCEEDED } from './mode';
+
+export const JEEDOM_EQUIPMENT_ID = 190;
+export const JEEDOM_OFF_COMMAND_ID = 1094;
 
 export const REFRESH_DELAY = 3 * 1000;
 export const LIGHT_ALL_OFF_ERROR_SNACKBAR = "Erreur lors de l'extinction des lumières !";
@@ -16,8 +20,6 @@ export const LIGHT_ALL_OFF_REQUESTED = 'LIGHT_ALL_OFF_REQUESTED';
 const initialState = {
   loading: false,
   error: false,
-  id: undefined,
-  off_cmd_id: undefined,
   lights: [],
 };
 
@@ -27,14 +29,11 @@ export default function reducer(state = initialState, action = {}) {
       return {
         loading: true,
         error: false,
-        id: action.payload.id,
-        off_cmd_id: action.payload.off_cmd_id,
         lights: [],
       };
 
     case LIGHT_ALL_STATUS_ERRORED:
       return {
-        ...state,
         loading: false,
         error: true,
         lights: [],
@@ -68,8 +67,6 @@ export default function reducer(state = initialState, action = {}) {
       });
 
       return {
-        ...state,
-        id: equipment.id,
         loading: false,
         error: false,
         lights: lights,
@@ -80,44 +77,41 @@ export default function reducer(state = initialState, action = {}) {
 }
 
 // Action Creators
-export function allLightStatusRequested({id, off_cmd_id}) {
-  return { type: LIGHT_ALL_STATUS_REQUESTED, payload: { id, off_cmd_id }}
+export function allLightStatusRequested() {
+  return { type: LIGHT_ALL_STATUS_REQUESTED }
 }
-export function allLightStatusErrored({ id, error }) {
-  return { type: LIGHT_ALL_STATUS_ERRORED, payload: { id, error }};
+export function allLightStatusErrored({ error }) {
+  return { type: LIGHT_ALL_STATUS_ERRORED, payload: { error }};
 }
-export function allLightStatusLoaded({ id, equipment }) {
-  return { type: LIGHT_ALL_STATUS_LOADED, payload: { id, equipment } }
+export function allLightStatusLoaded({ equipment }) {
+  return { type: LIGHT_ALL_STATUS_LOADED, payload: { equipment } }
 }
 
-export function allLightsOffRequested({ id, off_cmd_id }) {
-  return { type: LIGHT_ALL_OFF_REQUESTED, payload: { id, off_cmd_id } }
+export function allLightsOffRequested() {
+  return { type: LIGHT_ALL_OFF_REQUESTED }
 }
 
 // Side effects
 export function* saga() {
   yield takeEvery(LIGHT_ALL_STATUS_REQUESTED, lightStatusRequestSaga);
   yield takeEvery(LIGHT_ALL_OFF_REQUESTED, lightAllOffRequestSaga);
+  yield takeEvery(MODE_CHANGE_SUCCEEDED, lightStatusRequestSaga)
 }
 
-export function* lightStatusRequestSaga(action) {
+export function* lightStatusRequestSaga() {
   try {
-    const id = action.payload.id;
-    const equipment = yield call(getJeedomEquipment, id);
-    yield put(allLightStatusLoaded({ id, equipment }));
+    const equipment = yield call(getJeedomEquipment, JEEDOM_EQUIPMENT_ID);
+    yield put(allLightStatusLoaded({ equipment }));
   } catch (error) {
-    yield put(allLightStatusErrored({ id: action.payload.id, error }));
+    yield put(allLightStatusErrored({ error }));
   }
 }
 
-export function* lightAllOffRequestSaga(action) {
+export function* lightAllOffRequestSaga() {
   try {
-    yield call(execJeedomCmd, action.payload.off_cmd_id);
+    yield call(execJeedomCmd, JEEDOM_OFF_COMMAND_ID);
     yield delay(REFRESH_DELAY);
-    yield put(allLightStatusRequested({
-      id: action.payload.id,
-      off_cmd_id: action.payload.off_cmd_id,
-    }));
+    yield put(allLightStatusRequested());
   } catch (e) {
     yield put(showErrorSnackbar(LIGHT_ALL_OFF_ERROR_SNACKBAR));
   }

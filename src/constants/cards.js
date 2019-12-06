@@ -19,10 +19,6 @@ export const CARD_HOUSE_MODE = {
 export const CARD_HOUSE_LIGHT_ALL = {
   type: CARD_TYPES.lights,
   title: 'Lumières',
-  settings: {
-    equipment_id: 190,
-    command_id: 1094,
-  }
 };
 
 // Living

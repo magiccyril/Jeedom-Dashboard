@@ -64,10 +64,7 @@ export class CardContainer extends Component {
         break;
       
       case CARD_TYPES.lights:
-        this.props.getAllLightStatus({
-          id: card.settings.equipment_id,
-          off_cmd_id: card.settings.command_id,
-        });
+        this.props.getAllLightStatus();
         break;
       
       case CARD_TYPES.mode:
