@@ -1,39 +1,22 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import BackdropRoom from '../BackdropRoom/BackdropRoom';
 import './Room.scss';
 
-export class Room extends Component {
-  constructor() {
-    super();
+export function Room(props) {
+  const [backdropShown, setShowBackdrop] = useState(false);
+  const hideBackdrop = () => setShowBackdrop(false);
+  const showBackdrop = () => setShowBackdrop(true);
 
-    this.state = {
-      showBackdrop: false,
-    };
+  const backdrop = backdropShown ? <BackdropRoom room={props.room} onClose={hideBackdrop} /> : '';
 
-    this.handleClick = this.handleClick.bind(this);
-    this.handleClose = this.handleClose.bind(this);
-  }
-
-  handleClick() {
-    this.setState({showBackdrop: true});
-  }
-
-  handleClose() {
-    this.setState({showBackdrop: false});
-  }
-
-  render() {
-    const backdrop = this.state.showBackdrop ? <BackdropRoom room={this.props.room} onClose={this.handleClose} /> : '';
-
-    return (
-      <div className="col-6 col-md-4 col-lg-3">
-        <div className="card room" onClick={this.handleClick}>
-          {this.props.room.name}
-        </div>
-        {backdrop}
+  return (
+    <div className="col-6 col-md-4 col-lg-3">
+      <div className="card room" onClick={showBackdrop}>
+        {props.room.name}
       </div>
-    )
-  };
+      {backdrop}
+    </div>
+  )
 }
 
 export default Room;
