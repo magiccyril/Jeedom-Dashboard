@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import CardCamera from '../../components/CardCamera/CardCamera';
-import CardCameraGarage from '../../components/CardCameraGarage/CardCameraGarage';
+import CardCameraDoor from '../../components/CardCameraDoor/CardCameraDoor';
 import CardDoor from '../../components/CardDoor/CardDoor';
 import CardLight from '../../components/CardLights/CardLights';
 import CardMode from '../../components/CardMode/CardMode';
@@ -94,7 +94,7 @@ export class CardContainer extends Component {
         key={index} />;
 
       case CARD_TYPES.cameraDoor:
-        return <CardCameraGarage
+        return <CardCameraDoor
           title={card.title}
           cameraImage={this.props.camera[card.settings.equipment_id]}
           door={this.props.door[card.settings.door_status_command]}

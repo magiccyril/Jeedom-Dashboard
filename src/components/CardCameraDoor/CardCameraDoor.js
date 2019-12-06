@@ -3,14 +3,14 @@ import CardCamera from '../CardCamera/CardCamera';
 import BackdropDoorHistory from '../BackdropDoorHistory/BackdropDoorHistory';
 import { formatDoorDate } from '../utils';
 
-function CardCameraGarage(props) {
+function CardCameraDoor(props) {
   const status = formatDoorDate('Le garage', props.door);
 
   const overlay = props.door && props.door.loading ? 'Chargement...' : '';
 
   return (
     <CardCamera
-      title="Garage"
+      title={props.title}
       cameraImage={props.cameraImage}
       overlay={overlay}>
       <p className="card-text">{status}</p>
@@ -28,4 +28,4 @@ function CardCameraGarage(props) {
   );
 }
 
-export default CardCameraGarage;
+export default CardCameraDoor;
