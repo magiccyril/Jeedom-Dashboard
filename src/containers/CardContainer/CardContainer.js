@@ -29,9 +29,13 @@ export class CardContainer extends Component {
   }
 
   componentDidMount() {
-    this.props.cards.forEach((card) => {
-      this.prepareCard(card);
-    })
+    this.prepareAllCards();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (JSON.stringify(this.props.cards) !== JSON.stringify(prevProps.cards)) {
+      this.prepareAllCards();
+    }
   }
 
   handleShowMoreCards(e) {
@@ -39,6 +43,11 @@ export class CardContainer extends Component {
     this.setState({open: true});
   }
 
+  prepareAllCards() {
+    this.props.cards.forEach((card) => {
+      this.prepareCard(card);
+    })
+  }
   prepareCard(card) {
     switch (card.type) {
       case CARD_TYPES.camera:
