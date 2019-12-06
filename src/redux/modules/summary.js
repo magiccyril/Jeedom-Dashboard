@@ -1,5 +1,6 @@
 import { takeEvery, takeLatest, call, put, delay } from 'redux-saga/effects';
 import { getJeedomEquipment } from '../utils/jeedom';
+import { LIGHT_ALL_OFF_REQUESTED, REFRESH_DELAY as LIGHT_REFRESH_DELAY } from './light';
 
 const SUMMARY_EQUIPMENT_ID = 185;
 const REFRESH_DELAY = 60 * 1000;
@@ -68,6 +69,7 @@ export function summaryErrored(e) {
 export function* saga() {
   yield takeEvery(SUMMARY_REQUESTED, summaryRequestSaga);
   yield takeLatest(SUMMARY_INTERVAL_REGISTRATION, summaryIntervalRegistrationSaga);
+  yield takeEvery(LIGHT_ALL_OFF_REQUESTED, lightAllOffRequestSaga);
 }
 
 function* summaryIntervalRegistrationSaga() {
@@ -84,4 +86,9 @@ function* summaryRequestSaga() {
   } catch (e) {
     yield put(summaryErrored(e));
   }
+}
+
+function* lightAllOffRequestSaga() {
+  yield delay(LIGHT_REFRESH_DELAY);
+  yield put(summaryRequested())
 }
