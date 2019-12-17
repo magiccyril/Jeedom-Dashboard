@@ -21,10 +21,14 @@ function Home(props) {
   ), 0)
 
   if (presence > 0) {
+    const home_card_living_thermostat = { ...CARD_LIVING_THERMOSTAT, title: 'Séjour'};
+    const home_card_bedroom_agathe_thermostat = { ...CARD_BEDROOM_AGATHE_THERMOSTAT, title: 'Chambre Agathe'};
+    const home_card_bedroom_main_thermostat = { ...CARD_BEDROOM_MAIN_THERMOSTAT, title: 'Chambre'};
+
     cards.push(CARD_LIVING_LIGHT_MODE);
-    cards.push(CARD_LIVING_THERMOSTAT);
-    cards.push(CARD_BEDROOM_AGATHE_THERMOSTAT);
-    cards.push(CARD_BEDROOM_MAIN_THERMOSTAT);
+    cards.push(home_card_living_thermostat);
+    cards.push(home_card_bedroom_agathe_thermostat);
+    cards.push(home_card_bedroom_main_thermostat);
     cards.push(CARD_EXTERIOR_WEATHER);
   }
   else {
