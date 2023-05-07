@@ -8,7 +8,7 @@
     "chart.js": "^2.9.3",
     "gh-pages": "^2.1.1",
     "lodash": "^4.17.15",
-    "luxon": "^1.21.2",
+    "luxon": "^1.28.1",
     "node-sass": "^4.12.0",
     "react": "^16.10.2",
     "react-chartjs-2": "^2.8.0",
